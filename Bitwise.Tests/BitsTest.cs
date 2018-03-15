@@ -6,13 +6,16 @@ using Bitwise;
 
 namespace Bitwise.Tests
 {
-    [TestFixture]
-    public class BitsTest
+    public partial class BitsTest
     {
         [Test]
         public void TestHasAnyFlagInt64()
         {
-            Assert.AreEqual(true, ((long)1).HasAnyFlag(1));
+            Assert.IsTrue(((long)1).HasAnyFlag(1));
+            Assert.IsTrue(((long)3).HasAnyFlag(2));
+            Assert.IsFalse(((long)18).HasAnyFlag(9));
+            Assert.IsFalse(long.MaxValue.HasAnyFlag(0));
+            Assert.IsFalse(((long)0).HasAnyFlag(0));
         }
     }
 }
