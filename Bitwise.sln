@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2024
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bitwise", "Bitwise\Bitwise.csproj", "{0D63A3ED-F80A-4DAB-AEB4-C04781339842}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bitwise.Tests", "Bitwise.Tests\Bitwise.Tests.csproj", "{C6BF521C-558A-4898-90CD-4E381B9F6261}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0D63A3ED-F80A-4DAB-AEB4-C04781339842}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D63A3ED-F80A-4DAB-AEB4-C04781339842}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D63A3ED-F80A-4DAB-AEB4-C04781339842}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D63A3ED-F80A-4DAB-AEB4-C04781339842}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6BF521C-558A-4898-90CD-4E381B9F6261}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6BF521C-558A-4898-90CD-4E381B9F6261}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6BF521C-558A-4898-90CD-4E381B9F6261}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6BF521C-558A-4898-90CD-4E381B9F6261}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5DDA9CAB-8452-4E51-9B61-CA8011EEA7D6}
+	EndGlobalSection
+EndGlobal
