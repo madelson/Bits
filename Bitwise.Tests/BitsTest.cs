@@ -70,6 +70,25 @@ namespace Bitwise.Tests
         }
 
         /// <summary>
+        /// <see cref="Bits.ClearBit(long, int)"/>
+        /// </summary>
+        [Test]
+        public void TestClearBitInt64()
+        {
+            var allBitsSet = long.MinValue == default(long) ? long.MaxValue : unchecked((long)-1);
+
+            for (var i = 0; i < Bits.SizeOfInt64InBits; ++i)
+            {
+                Assert.AreEqual((long)0, default(long).ClearBit(i));
+                Assert.AreEqual(((long)25).ClearBit(i), ((long)25).ClearBit(i).ClearBit(i));
+                Assert.AreEqual((long)~(((long)1) << i), allBitsSet.ClearBit(i));
+            }
+
+            Assert.Throws<IndexOutOfRangeException>(() => default(long).SetBit(-1));
+            Assert.Throws<IndexOutOfRangeException>(() => default(long).SetBit(Bits.SizeOfInt64InBits + 1));
+        }
+
+        /// <summary>
         /// <see cref="Bits.FlipBit(long, int)"/>
         /// </summary>
         [Test]

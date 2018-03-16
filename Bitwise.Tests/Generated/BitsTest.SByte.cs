@@ -73,6 +73,25 @@ namespace Bitwise.Tests
         }
 
         /// <summary>
+        /// <see cref="Bits.ClearBit(sbyte, int)"/>
+        /// </summary>
+        [Test]
+        public void TestClearBitSByte()
+        {
+            var allBitsSet = sbyte.MinValue == default(sbyte) ? sbyte.MaxValue : unchecked((sbyte)-1);
+
+            for (var i = 0; i < Bits.SizeOfSByteInBits; ++i)
+            {
+                Assert.AreEqual((sbyte)0, default(sbyte).ClearBit(i));
+                Assert.AreEqual(((sbyte)25).ClearBit(i), ((sbyte)25).ClearBit(i).ClearBit(i));
+                Assert.AreEqual((sbyte)~(((sbyte)1) << i), allBitsSet.ClearBit(i));
+            }
+
+            Assert.Throws<IndexOutOfRangeException>(() => default(sbyte).SetBit(-1));
+            Assert.Throws<IndexOutOfRangeException>(() => default(sbyte).SetBit(Bits.SizeOfSByteInBits + 1));
+        }
+
+        /// <summary>
         /// <see cref="Bits.FlipBit(sbyte, int)"/>
         /// </summary>
         [Test]

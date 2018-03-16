@@ -45,6 +45,16 @@ namespace Bitwise
         }
 
         /// <summary>
+        /// Returns <paramref name="value"/> with the <paramref name="index"/>th bit cleared
+        /// </summary>
+        public static ulong ClearBit(this ulong value, int index)
+        {
+            if ((index & ~(SizeOfUInt64InBits - 1)) != 0) { ThrowIndexOutOfRange(); }
+
+            return (ulong)(value & unchecked((ulong)~(((ulong)1) << index)));
+        }
+
+        /// <summary>
         /// Returns <paramref name="value"/> with the <paramref name="index"/>th flipped
         /// </summary>
         public static ulong FlipBit(this ulong value, int index)

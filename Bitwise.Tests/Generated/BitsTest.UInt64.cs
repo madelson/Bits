@@ -73,6 +73,25 @@ namespace Bitwise.Tests
         }
 
         /// <summary>
+        /// <see cref="Bits.ClearBit(ulong, int)"/>
+        /// </summary>
+        [Test]
+        public void TestClearBitUInt64()
+        {
+            var allBitsSet = ulong.MinValue == default(ulong) ? ulong.MaxValue : unchecked((ulong)-1);
+
+            for (var i = 0; i < Bits.SizeOfUInt64InBits; ++i)
+            {
+                Assert.AreEqual((ulong)0, default(ulong).ClearBit(i));
+                Assert.AreEqual(((ulong)25).ClearBit(i), ((ulong)25).ClearBit(i).ClearBit(i));
+                Assert.AreEqual((ulong)~(((ulong)1) << i), allBitsSet.ClearBit(i));
+            }
+
+            Assert.Throws<IndexOutOfRangeException>(() => default(ulong).SetBit(-1));
+            Assert.Throws<IndexOutOfRangeException>(() => default(ulong).SetBit(Bits.SizeOfUInt64InBits + 1));
+        }
+
+        /// <summary>
         /// <see cref="Bits.FlipBit(ulong, int)"/>
         /// </summary>
         [Test]

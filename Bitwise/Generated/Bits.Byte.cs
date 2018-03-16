@@ -45,6 +45,16 @@ namespace Bitwise
         }
 
         /// <summary>
+        /// Returns <paramref name="value"/> with the <paramref name="index"/>th bit cleared
+        /// </summary>
+        public static byte ClearBit(this byte value, int index)
+        {
+            if ((index & ~(SizeOfByteInBits - 1)) != 0) { ThrowIndexOutOfRange(); }
+
+            return (byte)(value & unchecked((byte)~(((byte)1) << index)));
+        }
+
+        /// <summary>
         /// Returns <paramref name="value"/> with the <paramref name="index"/>th flipped
         /// </summary>
         public static byte FlipBit(this byte value, int index)
