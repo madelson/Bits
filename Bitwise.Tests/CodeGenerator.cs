@@ -17,6 +17,7 @@ namespace Bitwise.Tests
             var testBinDirectory = Path.GetDirectoryName(this.GetType().Assembly.Location);
 
             GenerateCodeForAlternateNumericTypes(Path.Combine(testBinDirectory, @"..\..\..\..\Bitwise\Bits.cs"));
+            GenerateCodeForAlternateNumericTypes(Path.Combine(testBinDirectory, @"..\..\..\BitsTest.cs"));
         }
 
         private static void GenerateCodeForAlternateNumericTypes(string path)
@@ -36,17 +37,43 @@ namespace Bitwise.Tests
 
             foreach (var type in alternateNumericTypes)
             {
-                var typePath = Path.Combine(Path.GetDirectoryName(path), $"{Path.GetFileNameWithoutExtension(path)}.{type.Name}{Path.GetExtension(path)}");
-                using (var writer = new StreamWriter(typePath))
+                var typePath = Path.Combine(Path.GetDirectoryName(path), "Generated", $"{Path.GetFileNameWithoutExtension(path)}.{type.Name}{Path.GetExtension(path)}");
+                using (var writer = new StringWriter())
                 {
+                    writer.WriteLine("//");
+                    writer.WriteLine("// AUTO-GENERATED");
+                    writer.WriteLine("//");
                     writer.Write(parsed.Header);
 
-                    foreach (var member in parsed.Members.GroupBy(m => m.Name))
+                    foreach (var memberGroup in parsed.Members.GroupBy(m => m.Name))
                     {
-                        // todo
+                        if (!memberGroup.Any(m => m.MemberFor == type))
+                        {
+                            var referenceMember = memberGroup.OrderByDescending(m => IsUnsigned(type) && m.MemberFor == typeof(ulong))
+                                .ThenByDescending(m => m.MemberFor == typeof(long))
+                                .First();
+                            var typeMember = Regex.Replace(
+                                referenceMember.Body,
+                                $@"(?<alias>{ToAlias(referenceMember.MemberFor)})|(?<name>{referenceMember.MemberFor.Name})"
+                                    + $@"|(?<signedAlias>{ToAlias(GetSignedVariant(referenceMember.MemberFor))})",
+                                m => m.Groups["alias"].Success ? ToAlias(type)
+                                    : m.Groups["name"].Success ? type.Name
+                                    : m.Groups["signedAlias"].Success ? ToAlias(GetSignedVariant(type))
+                                    : throw new InvalidOperationException(m.Value)
+                            );
+
+                            writer.Write(typeMember);
+                        }
                     }
 
                     writer.Write(parsed.Footer);
+
+                    var result = writer.ToString();
+                    if (!File.Exists(typePath) || File.ReadAllText(typePath) != result)
+                    {
+                        Directory.CreateDirectory(Path.GetDirectoryName(typePath));
+                        File.WriteAllText(typePath, result);
+                    }
                 }
             }
         }
@@ -87,6 +114,12 @@ namespace Bitwise.Tests
             };
         }
 
+        private static bool IsUnsigned(Type type) => GetSignedVariant(type) != type;
+
+        private static Type GetSignedVariant(Type type) => type.Name.StartsWith("U") ? Type.GetType($"{type.Namespace}.{type.Name.Substring(1)}", throwOnError: true)
+            : type == typeof(byte) ? typeof(sbyte)
+            : type;
+
         private static Type FromAlias(string alias)
         {
             switch (alias)
@@ -100,6 +133,22 @@ namespace Bitwise.Tests
                 case "long": return typeof(long);
                 case "ulong": return typeof(ulong);
                 default: throw new ArgumentException(alias);
+            }
+        }
+
+        private static string ToAlias(Type type)
+        {
+            switch (type.Name)
+            {
+                case nameof(SByte): return "sbyte";
+                case nameof(Byte): return "byte";
+                case nameof(Int16): return "short";
+                case nameof(UInt16): return "ushort";
+                case nameof(Int32): return "int";
+                case nameof(UInt32): return "uint";
+                case nameof(Int64): return "long";
+                case nameof(UInt64): return "ulong";
+                default: throw new ArgumentException(type.ToString());
             }
         }
 

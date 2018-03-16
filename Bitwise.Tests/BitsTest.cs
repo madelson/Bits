@@ -8,6 +8,9 @@ namespace Bitwise.Tests
 {
     public partial class BitsTest
     {
+        /// <summary>
+        /// <see cref="Bits.HasAnyFlag(long, long)"/>
+        /// </summary>
         [Test]
         public void TestHasAnyFlagInt64()
         {
@@ -17,5 +20,7 @@ namespace Bitwise.Tests
             Assert.IsFalse(long.MaxValue.HasAnyFlag(0));
             Assert.IsFalse(((long)0).HasAnyFlag(0));
         }
+
+        // END MEMBERS
     }
 }

@@ -13,4 +13,8 @@
     <ProjectReference Include="..\Bitwise\Bitwise.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Generated\" />
+  </ItemGroup>
+
 </Project>
