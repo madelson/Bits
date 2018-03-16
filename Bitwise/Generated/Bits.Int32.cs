@@ -69,6 +69,11 @@ namespace Bitwise
         /// </summary>
         public static int ClearLeastSignificantBit(int value) => (int)(value & unchecked(value - 1));
 
+        /// <summary>
+        /// Returns <paramref name="value"/> with all bits cleared EXCEPT the least significant bit
+        /// </summary>
+        public static int ClearAllButLeastSignificantBit(int value) => (int)(value & unchecked(-value));
+
         
     }
 }

@@ -60,13 +60,17 @@ namespace Bitwise.Tests
         public void TestSetBitUInt64()
         {
             var allBitsSet = ulong.MinValue == default(ulong) ? ulong.MaxValue : unchecked((ulong)-1);
+            var noBitsSet = default(ulong);
 
             for (var i = 0; i < Bits.SizeOfUInt64InBits; ++i)
             {
                 Assert.AreEqual((ulong)(((ulong)1) << i), default(ulong).SetBit(i));
                 Assert.AreEqual(((ulong)25).SetBit(i), ((ulong)25).SetBit(i).SetBit(i));
                 Assert.AreEqual(allBitsSet, allBitsSet.SetBit(i));
+                noBitsSet = noBitsSet.SetBit(i);
             }
+
+            Assert.AreEqual(allBitsSet, noBitsSet);
 
             Assert.Throws<IndexOutOfRangeException>(() => default(ulong).SetBit(-1));
             Assert.Throws<IndexOutOfRangeException>(() => default(ulong).SetBit(Bits.SizeOfUInt64InBits + 1));
@@ -128,6 +132,22 @@ namespace Bitwise.Tests
             }
 
             Assert.AreEqual(default(ulong), allBitsSet);
+        }
+
+        /// <summary>
+        /// <see cref="Bits.ClearAllButLeastSignificantBit(ulong)"/>
+        /// </summary>
+        [Test]
+        public void TestClearAllButLeastSignificantBitUInt64()
+        {
+            Assert.AreEqual((ulong)0b000100, Bits.ClearAllButLeastSignificantBit((ulong)0b101100));
+            Assert.AreEqual(default(ulong), Bits.ClearAllButLeastSignificantBit(default(ulong)));
+
+            for (var i = 1; i < Bits.SizeOfUInt64InBits; ++i)
+            {
+                Assert.AreEqual(default(ulong).SetBit(i), Bits.ClearAllButLeastSignificantBit((default(ulong).SetBit(i))));
+                Assert.AreEqual(default(ulong).SetBit(i - 1), Bits.ClearAllButLeastSignificantBit(default(ulong).SetBit(i - 1).SetBit(i)));
+            }
         }
 
         

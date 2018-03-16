@@ -66,6 +66,17 @@ namespace Bitwise
         /// </summary>
         public static long ClearLeastSignificantBit(long value) => (long)(value & unchecked(value - 1));
 
+        /// <summary>
+        /// Returns <paramref name="value"/> with all bits cleared EXCEPT the least significant bit
+        /// </summary>
+        public static long ClearAllButLeastSignificantBit(long value) => (long)(value & unchecked(-value));
+
+        /// <summary>
+        /// Returns <paramref name="value"/> with all bits cleared EXCEPT the least significant bit
+        /// </summary>
+        [MemberFor(typeof(ulong))]
+        public static ulong ClearAllButLeastSignificantBit(ulong value) => unchecked((ulong)ClearAllButLeastSignificantBit((long)value));
+
         // END MEMBERS
     }
 }

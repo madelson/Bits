@@ -60,13 +60,17 @@ namespace Bitwise.Tests
         public void TestSetBitInt16()
         {
             var allBitsSet = short.MinValue == default(short) ? short.MaxValue : unchecked((short)-1);
+            var noBitsSet = default(short);
 
             for (var i = 0; i < Bits.SizeOfInt16InBits; ++i)
             {
                 Assert.AreEqual((short)(((short)1) << i), default(short).SetBit(i));
                 Assert.AreEqual(((short)25).SetBit(i), ((short)25).SetBit(i).SetBit(i));
                 Assert.AreEqual(allBitsSet, allBitsSet.SetBit(i));
+                noBitsSet = noBitsSet.SetBit(i);
             }
+
+            Assert.AreEqual(allBitsSet, noBitsSet);
 
             Assert.Throws<IndexOutOfRangeException>(() => default(short).SetBit(-1));
             Assert.Throws<IndexOutOfRangeException>(() => default(short).SetBit(Bits.SizeOfInt16InBits + 1));
@@ -128,6 +132,22 @@ namespace Bitwise.Tests
             }
 
             Assert.AreEqual(default(short), allBitsSet);
+        }
+
+        /// <summary>
+        /// <see cref="Bits.ClearAllButLeastSignificantBit(short)"/>
+        /// </summary>
+        [Test]
+        public void TestClearAllButLeastSignificantBitInt16()
+        {
+            Assert.AreEqual((short)0b000100, Bits.ClearAllButLeastSignificantBit((short)0b101100));
+            Assert.AreEqual(default(short), Bits.ClearAllButLeastSignificantBit(default(short)));
+
+            for (var i = 1; i < Bits.SizeOfInt16InBits; ++i)
+            {
+                Assert.AreEqual(default(short).SetBit(i), Bits.ClearAllButLeastSignificantBit((default(short).SetBit(i))));
+                Assert.AreEqual(default(short).SetBit(i - 1), Bits.ClearAllButLeastSignificantBit(default(short).SetBit(i - 1).SetBit(i)));
+            }
         }
 
         
