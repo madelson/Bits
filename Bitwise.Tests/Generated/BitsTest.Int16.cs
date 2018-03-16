@@ -24,6 +24,19 @@ namespace Bitwise.Tests
             Assert.IsFalse(((short)0).HasAnyFlag(0));
         }
 
+        /// <summary>
+        /// <see cref="Bits.HasAllFlags(short, short)"/>
+        /// </summary>
+        [Test]
+        public void TestHasAllFlagsInt16()
+        {
+            Assert.IsTrue(((short)1).HasAllFlags(1));
+            Assert.IsTrue(((short)3).HasAllFlags(2));
+            Assert.IsFalse(((short)18).HasAllFlags(9));
+            Assert.IsTrue(short.MaxValue.HasAllFlags(0));
+            Assert.IsTrue(((short)0).HasAllFlags(0));
+        }
+
         
     }
 }

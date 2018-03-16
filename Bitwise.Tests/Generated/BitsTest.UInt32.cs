@@ -24,6 +24,19 @@ namespace Bitwise.Tests
             Assert.IsFalse(((uint)0).HasAnyFlag(0));
         }
 
+        /// <summary>
+        /// <see cref="Bits.HasAllFlags(uint, uint)"/>
+        /// </summary>
+        [Test]
+        public void TestHasAllFlagsUInt32()
+        {
+            Assert.IsTrue(((uint)1).HasAllFlags(1));
+            Assert.IsTrue(((uint)3).HasAllFlags(2));
+            Assert.IsFalse(((uint)18).HasAllFlags(9));
+            Assert.IsTrue(uint.MaxValue.HasAllFlags(0));
+            Assert.IsTrue(((uint)0).HasAllFlags(0));
+        }
+
         
     }
 }

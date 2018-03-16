@@ -19,6 +19,11 @@ namespace Bitwise
         /// </summary>
         public static bool HasAnyFlag(this ushort value, ushort flags) => (value & flags) != 0;
 
+        /// <summary>
+        /// Determines whether <paramref name="value"/> has all of the bits set that are set in <paramref name="flags"/>
+        /// </summary>
+        public static bool HasAllFlags(this ushort value, ushort flags) => (value & flags) == flags;
+
         
     }
 }
