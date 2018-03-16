@@ -143,10 +143,32 @@ namespace Bitwise.Tests
             Assert.AreEqual((uint)0b000100, Bits.ClearAllButLeastSignificantBit((uint)0b101100));
             Assert.AreEqual(default(uint), Bits.ClearAllButLeastSignificantBit(default(uint)));
 
-            for (var i = 1; i < Bits.SizeOfUInt32InBits; ++i)
+            for (var i = 0; i < Bits.SizeOfUInt32InBits; ++i)
             {
                 Assert.AreEqual(default(uint).SetBit(i), Bits.ClearAllButLeastSignificantBit((default(uint).SetBit(i))));
-                Assert.AreEqual(default(uint).SetBit(i - 1), Bits.ClearAllButLeastSignificantBit(default(uint).SetBit(i - 1).SetBit(i)));
+                if (i > 0)
+                {
+                    Assert.AreEqual(default(uint).SetBit(i - 1), Bits.ClearAllButLeastSignificantBit(default(uint).SetBit(i - 1).SetBit(i)));
+                }
+            }
+        }
+
+        /// <summary>
+        /// <see cref="Bits.ClearAllButMostSignificantBit(uint)"/>
+        /// </summary>
+        [Test]
+        public void TestClearAllButMostSignificantBitUInt32()
+        {
+            Assert.AreEqual((uint)0b100000, Bits.ClearAllButMostSignificantBit((uint)0b101100));
+            Assert.AreEqual(default(uint), Bits.ClearAllButMostSignificantBit(default(uint)));
+
+            for (var i = 0; i < Bits.SizeOfUInt32InBits; ++i)
+            {
+                Assert.AreEqual(default(uint).SetBit(i), Bits.ClearAllButMostSignificantBit((default(uint).SetBit(i))));
+                if (i > 0)
+                {
+                    Assert.AreEqual(default(uint).SetBit(i), Bits.ClearAllButMostSignificantBit(default(uint).SetBit(i - 1).SetBit(i)));
+                }
             }
         }
 

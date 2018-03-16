@@ -75,6 +75,40 @@ namespace Bitwise
         [MemberFor(typeof(byte))]
         public static byte ClearAllButLeastSignificantBit(byte value) => unchecked((byte)ClearAllButLeastSignificantBit((sbyte)value));
 
+        /// <summary>
+        /// Returns <paramref name="value"/> with all bits cleared EXCEPT the most significant bit
+        /// </summary>
+        [MemberFor(typeof(byte))]
+        public static byte ClearAllButMostSignificantBit(byte value)
+        {
+            // the idea here is to steadily set all bits less significant than the most significant bit,
+            // and then follow up by clearing them all. See https://stackoverflow.com/questions/28846601/java-integer-highestonebit-in-c-sharp
+
+            value = (byte)(value | (value >> 1));
+            value = (byte)(value | (value >> 2));
+            value = (byte)(value | (value >> 4));
+
+            // to simplify codegen for smaller integral types, we fork on sizeof().
+            // The compiler will remove these branches so that no additional inefficiency
+            // is incurred
+#pragma warning disable 0162
+            if (sizeof(byte) > 1)
+            {
+                value = (byte)(value | (value >> 8));
+                if (sizeof(byte) > 2)
+                {
+                    value = (byte)(value | (value >> 16));
+                    if (sizeof(byte) > 4)
+                    {
+                        value = (byte)(value | (value >> 32));
+                    }
+                }
+            }
+#pragma warning restore 0162
+
+            return (byte)(value - (byte)(value >> 1));
+        }
+
         
     }
 }

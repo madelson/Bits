@@ -143,10 +143,32 @@ namespace Bitwise.Tests
             Assert.AreEqual((ulong)0b000100, Bits.ClearAllButLeastSignificantBit((ulong)0b101100));
             Assert.AreEqual(default(ulong), Bits.ClearAllButLeastSignificantBit(default(ulong)));
 
-            for (var i = 1; i < Bits.SizeOfUInt64InBits; ++i)
+            for (var i = 0; i < Bits.SizeOfUInt64InBits; ++i)
             {
                 Assert.AreEqual(default(ulong).SetBit(i), Bits.ClearAllButLeastSignificantBit((default(ulong).SetBit(i))));
-                Assert.AreEqual(default(ulong).SetBit(i - 1), Bits.ClearAllButLeastSignificantBit(default(ulong).SetBit(i - 1).SetBit(i)));
+                if (i > 0)
+                {
+                    Assert.AreEqual(default(ulong).SetBit(i - 1), Bits.ClearAllButLeastSignificantBit(default(ulong).SetBit(i - 1).SetBit(i)));
+                }
+            }
+        }
+
+        /// <summary>
+        /// <see cref="Bits.ClearAllButMostSignificantBit(ulong)"/>
+        /// </summary>
+        [Test]
+        public void TestClearAllButMostSignificantBitUInt64()
+        {
+            Assert.AreEqual((ulong)0b100000, Bits.ClearAllButMostSignificantBit((ulong)0b101100));
+            Assert.AreEqual(default(ulong), Bits.ClearAllButMostSignificantBit(default(ulong)));
+
+            for (var i = 0; i < Bits.SizeOfUInt64InBits; ++i)
+            {
+                Assert.AreEqual(default(ulong).SetBit(i), Bits.ClearAllButMostSignificantBit((default(ulong).SetBit(i))));
+                if (i > 0)
+                {
+                    Assert.AreEqual(default(ulong).SetBit(i), Bits.ClearAllButMostSignificantBit(default(ulong).SetBit(i - 1).SetBit(i)));
+                }
             }
         }
 
