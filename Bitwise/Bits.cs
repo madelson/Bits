@@ -61,6 +61,11 @@ namespace Bitwise
             return (long)(value ^ (long)(((long)1) << index));
         }
 
+        /// <summary>
+        /// Returns <paramref name="value"/> with the least significant bit cleared
+        /// </summary>
+        public static long ClearLeastSignificantBit(long value) => (long)(value & unchecked(value - 1));
+
         // END MEMBERS
     }
 }

@@ -110,6 +110,26 @@ namespace Bitwise.Tests
             Assert.Throws<IndexOutOfRangeException>(() => default(ulong).SetBit(Bits.SizeOfUInt64InBits + 1));
         }
 
+        /// <summary>
+        /// <see cref="Bits.ClearLeastSignificantBit(ulong)"/>
+        /// </summary>
+        [Test]
+        public void TestClearLeastSignificantBitUInt64()
+        {
+            Assert.AreEqual((ulong)0b101000, Bits.ClearLeastSignificantBit((ulong)0b101100));
+            Assert.AreEqual(default(ulong), Bits.ClearLeastSignificantBit(default(ulong)));
+
+            var allBitsSet = ulong.MinValue == default(ulong) ? ulong.MaxValue : unchecked((ulong)-1);
+
+            for (var i = 0; i < Bits.SizeOfUInt64InBits; ++i)
+            {
+                Assert.AreEqual(default(ulong), Bits.ClearLeastSignificantBit((ulong)((ulong)1 << i)));
+                allBitsSet = Bits.ClearLeastSignificantBit(allBitsSet);
+            }
+
+            Assert.AreEqual(default(ulong), allBitsSet);
+        }
+
         
     }
 }

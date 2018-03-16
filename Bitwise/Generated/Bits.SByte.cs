@@ -64,6 +64,11 @@ namespace Bitwise
             return (sbyte)(value ^ (sbyte)(((sbyte)1) << index));
         }
 
+        /// <summary>
+        /// Returns <paramref name="value"/> with the least significant bit cleared
+        /// </summary>
+        public static sbyte ClearLeastSignificantBit(sbyte value) => (sbyte)(value & unchecked(value - 1));
+
         
     }
 }

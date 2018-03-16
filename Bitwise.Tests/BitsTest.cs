@@ -107,6 +107,26 @@ namespace Bitwise.Tests
             Assert.Throws<IndexOutOfRangeException>(() => default(long).SetBit(Bits.SizeOfInt64InBits + 1));
         }
 
+        /// <summary>
+        /// <see cref="Bits.ClearLeastSignificantBit(long)"/>
+        /// </summary>
+        [Test]
+        public void TestClearLeastSignificantBitInt64()
+        {
+            Assert.AreEqual((long)0b101000, Bits.ClearLeastSignificantBit((long)0b101100));
+            Assert.AreEqual(default(long), Bits.ClearLeastSignificantBit(default(long)));
+
+            var allBitsSet = long.MinValue == default(long) ? long.MaxValue : unchecked((long)-1);
+
+            for (var i = 0; i < Bits.SizeOfInt64InBits; ++i)
+            {
+                Assert.AreEqual(default(long), Bits.ClearLeastSignificantBit((long)((long)1 << i)));
+                allBitsSet = Bits.ClearLeastSignificantBit(allBitsSet);
+            }
+
+            Assert.AreEqual(default(long), allBitsSet);
+        }
+
         // END MEMBERS
     }
 }

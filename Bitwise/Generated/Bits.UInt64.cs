@@ -64,6 +64,11 @@ namespace Bitwise
             return (ulong)(value ^ (ulong)(((ulong)1) << index));
         }
 
+        /// <summary>
+        /// Returns <paramref name="value"/> with the least significant bit cleared
+        /// </summary>
+        public static ulong ClearLeastSignificantBit(ulong value) => (ulong)(value & unchecked(value - 1));
+
         
     }
 }
