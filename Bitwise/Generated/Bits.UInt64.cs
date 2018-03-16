@@ -34,6 +34,16 @@ namespace Bitwise
             return value.HasAnyFlag((ulong)(((ulong)1) << index));
         }
 
+        /// <summary>
+        /// Returns <paramref name="value"/> with the <paramref name="index"/>th bit set
+        /// </summary>
+        public static ulong SetBit(this ulong value, int index)
+        {
+            if ((index & ~(SizeOfUInt64InBits - 1)) != 0) { ThrowIndexOutOfRange(); }
+
+            return (ulong)(value | (ulong)(((ulong)1) << index));
+        }
+
         
     }
 }

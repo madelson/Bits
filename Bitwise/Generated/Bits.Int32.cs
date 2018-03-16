@@ -34,6 +34,16 @@ namespace Bitwise
             return value.HasAnyFlag((int)(((int)1) << index));
         }
 
+        /// <summary>
+        /// Returns <paramref name="value"/> with the <paramref name="index"/>th bit set
+        /// </summary>
+        public static int SetBit(this int value, int index)
+        {
+            if ((index & ~(SizeOfInt32InBits - 1)) != 0) { ThrowIndexOutOfRange(); }
+
+            return (int)(value | (int)(((int)1) << index));
+        }
+
         
     }
 }

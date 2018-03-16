@@ -53,6 +53,25 @@ namespace Bitwise.Tests
             Assert.Throws<IndexOutOfRangeException>(() => default(ulong).GetBit(Bits.SizeOfUInt64InBits + 1));
         }
 
+        /// <summary>
+        /// <see cref="Bits.SetBit(ulong, int)"/>
+        /// </summary>
+        [Test]
+        public void TestSetBitUInt64()
+        {
+            var allBitsSet = ulong.MinValue == default(ulong) ? ulong.MaxValue : unchecked((ulong)-1);
+
+            for (var i = 0; i < Bits.SizeOfUInt64InBits; ++i)
+            {
+                Assert.AreEqual((ulong)(((ulong)1) << i), default(ulong).SetBit(i));
+                Assert.AreEqual(((ulong)25).SetBit(i), ((ulong)25).SetBit(i).SetBit(i));
+                Assert.AreEqual(allBitsSet, allBitsSet.SetBit(i));
+            }
+
+            Assert.Throws<IndexOutOfRangeException>(() => default(ulong).SetBit(-1));
+            Assert.Throws<IndexOutOfRangeException>(() => default(ulong).SetBit(Bits.SizeOfUInt64InBits + 1));
+        }
+
         
     }
 }

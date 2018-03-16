@@ -53,6 +53,25 @@ namespace Bitwise.Tests
             Assert.Throws<IndexOutOfRangeException>(() => default(int).GetBit(Bits.SizeOfInt32InBits + 1));
         }
 
+        /// <summary>
+        /// <see cref="Bits.SetBit(int, int)"/>
+        /// </summary>
+        [Test]
+        public void TestSetBitInt32()
+        {
+            var allBitsSet = int.MinValue == default(int) ? int.MaxValue : unchecked((int)-1);
+
+            for (var i = 0; i < Bits.SizeOfInt32InBits; ++i)
+            {
+                Assert.AreEqual((int)(((int)1) << i), default(int).SetBit(i));
+                Assert.AreEqual(((int)25).SetBit(i), ((int)25).SetBit(i).SetBit(i));
+                Assert.AreEqual(allBitsSet, allBitsSet.SetBit(i));
+            }
+
+            Assert.Throws<IndexOutOfRangeException>(() => default(int).SetBit(-1));
+            Assert.Throws<IndexOutOfRangeException>(() => default(int).SetBit(Bits.SizeOfInt32InBits + 1));
+        }
+
         
     }
 }
