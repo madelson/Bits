@@ -72,6 +72,25 @@ namespace Bitwise.Tests
             Assert.Throws<IndexOutOfRangeException>(() => default(ushort).SetBit(Bits.SizeOfUInt16InBits + 1));
         }
 
+        /// <summary>
+        /// <see cref="Bits.FlipBit(ushort, int)"/>
+        /// </summary>
+        [Test]
+        public void TestFlipBitUInt16()
+        {
+            var allBitsSet = ushort.MinValue == default(ushort) ? ushort.MaxValue : unchecked((ushort)-1);
+
+            for (var i = 0; i < Bits.SizeOfUInt16InBits; ++i)
+            {
+                Assert.AreEqual((ushort)(((ushort)1) << i), default(ushort).FlipBit(i));
+                Assert.AreEqual(((ushort)25), ((ushort)25).FlipBit(i).FlipBit(i));
+                Assert.AreEqual((ushort)~(((ushort)1) << i), allBitsSet.FlipBit(i));
+            }
+
+            Assert.Throws<IndexOutOfRangeException>(() => default(ushort).SetBit(-1));
+            Assert.Throws<IndexOutOfRangeException>(() => default(ushort).SetBit(Bits.SizeOfUInt16InBits + 1));
+        }
+
         
     }
 }

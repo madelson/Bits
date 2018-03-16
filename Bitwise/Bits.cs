@@ -41,6 +41,16 @@ namespace Bitwise
             return (long)(value | (long)(((long)1) << index));
         }
 
+        /// <summary>
+        /// Returns <paramref name="value"/> with the <paramref name="index"/>th flipped
+        /// </summary>
+        public static long FlipBit(this long value, int index)
+        {
+            if ((index & ~(SizeOfInt64InBits - 1)) != 0) { ThrowIndexOutOfRange(); }
+
+            return (long)(value ^ (long)(((long)1) << index));
+        }
+
         // END MEMBERS
     }
 }

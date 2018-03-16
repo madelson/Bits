@@ -44,6 +44,16 @@ namespace Bitwise
             return (ushort)(value | (ushort)(((ushort)1) << index));
         }
 
+        /// <summary>
+        /// Returns <paramref name="value"/> with the <paramref name="index"/>th flipped
+        /// </summary>
+        public static ushort FlipBit(this ushort value, int index)
+        {
+            if ((index & ~(SizeOfUInt16InBits - 1)) != 0) { ThrowIndexOutOfRange(); }
+
+            return (ushort)(value ^ (ushort)(((ushort)1) << index));
+        }
+
         
     }
 }

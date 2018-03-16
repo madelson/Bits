@@ -44,6 +44,16 @@ namespace Bitwise
             return (uint)(value | (uint)(((uint)1) << index));
         }
 
+        /// <summary>
+        /// Returns <paramref name="value"/> with the <paramref name="index"/>th flipped
+        /// </summary>
+        public static uint FlipBit(this uint value, int index)
+        {
+            if ((index & ~(SizeOfUInt32InBits - 1)) != 0) { ThrowIndexOutOfRange(); }
+
+            return (uint)(value ^ (uint)(((uint)1) << index));
+        }
+
         
     }
 }

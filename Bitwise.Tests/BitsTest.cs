@@ -69,6 +69,25 @@ namespace Bitwise.Tests
             Assert.Throws<IndexOutOfRangeException>(() => default(long).SetBit(Bits.SizeOfInt64InBits + 1));
         }
 
+        /// <summary>
+        /// <see cref="Bits.FlipBit(long, int)"/>
+        /// </summary>
+        [Test]
+        public void TestFlipBitInt64()
+        {
+            var allBitsSet = long.MinValue == default(long) ? long.MaxValue : unchecked((long)-1);
+
+            for (var i = 0; i < Bits.SizeOfInt64InBits; ++i)
+            {
+                Assert.AreEqual((long)(((long)1) << i), default(long).FlipBit(i));
+                Assert.AreEqual(((long)25), ((long)25).FlipBit(i).FlipBit(i));
+                Assert.AreEqual((long)~(((long)1) << i), allBitsSet.FlipBit(i));
+            }
+
+            Assert.Throws<IndexOutOfRangeException>(() => default(long).SetBit(-1));
+            Assert.Throws<IndexOutOfRangeException>(() => default(long).SetBit(Bits.SizeOfInt64InBits + 1));
+        }
+
         // END MEMBERS
     }
 }
