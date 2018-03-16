@@ -37,6 +37,22 @@ namespace Bitwise.Tests
             Assert.IsTrue(((int)0).HasAllFlags(0));
         }
 
+        /// <summary>
+        /// <see cref="Bits.GetBit(int, int)"/>
+        /// </summary>
+        [Test]
+        public void TestGetBitInt32()
+        {
+            for (var i = 0; i < Bits.SizeOfInt32InBits; ++i)
+            {
+                Assert.IsTrue((((int)1) << i).GetBit(i));
+                Assert.IsFalse((~(((int)1) << i)).GetBit(i));
+            }
+
+            Assert.Throws<IndexOutOfRangeException>(() => default(int).GetBit(-1));
+            Assert.Throws<IndexOutOfRangeException>(() => default(int).GetBit(Bits.SizeOfInt32InBits + 1));
+        }
+
         
     }
 }

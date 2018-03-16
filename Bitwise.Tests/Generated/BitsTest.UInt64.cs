@@ -37,6 +37,22 @@ namespace Bitwise.Tests
             Assert.IsTrue(((ulong)0).HasAllFlags(0));
         }
 
+        /// <summary>
+        /// <see cref="Bits.GetBit(ulong, int)"/>
+        /// </summary>
+        [Test]
+        public void TestGetBitUInt64()
+        {
+            for (var i = 0; i < Bits.SizeOfUInt64InBits; ++i)
+            {
+                Assert.IsTrue((((ulong)1) << i).GetBit(i));
+                Assert.IsFalse((~(((ulong)1) << i)).GetBit(i));
+            }
+
+            Assert.Throws<IndexOutOfRangeException>(() => default(ulong).GetBit(-1));
+            Assert.Throws<IndexOutOfRangeException>(() => default(ulong).GetBit(Bits.SizeOfUInt64InBits + 1));
+        }
+
         
     }
 }

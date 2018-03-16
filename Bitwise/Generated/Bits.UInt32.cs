@@ -12,7 +12,7 @@ namespace Bitwise
         /// <summary>
         /// Size of the <see cref="uint"/> type in bits
         /// </summary>
-        private const int SizeOfUInt32InBits = sizeof(uint) * 8;
+        internal const int SizeOfUInt32InBits = sizeof(uint) * 8;
 
         /// <summary>
         /// Determines whether <paramref name="value"/> has any of the same bits set as <paramref name="flags"/>
@@ -23,6 +23,16 @@ namespace Bitwise
         /// Determines whether <paramref name="value"/> has all of the bits set that are set in <paramref name="flags"/>
         /// </summary>
         public static bool HasAllFlags(this uint value, uint flags) => (value & flags) == flags;
+
+        /// <summary>
+        /// Determines whether the <paramref name="index"/>th bit is set in <paramref name="value"/>
+        /// </summary>
+        public static bool GetBit(this uint value, int index)
+        {
+            if ((index & ~(SizeOfUInt32InBits - 1)) != 0) { ThrowIndexOutOfRange(); }
+
+            return value.HasAnyFlag((uint)(((uint)1) << index));
+        }
 
         
     }
