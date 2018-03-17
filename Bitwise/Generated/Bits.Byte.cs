@@ -109,6 +109,53 @@ namespace Bitwise
         }
 
         /// <summary>
+        /// Returns the number of set bits in <paramref name="value"/>
+        /// </summary>
+        [MemberFor(typeof(byte))]
+        public static int BitCount(byte value)
+        {
+            // based on http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/6-b14/java/lang/Long.java#Long.bitCount%28sbyte%29
+            // also described here: http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
+
+            unchecked
+            {
+                value = (byte)(value - (byte)((byte)(value >> 1) & (byte)0x5555555555555555));
+                value = (byte)((byte)(value & (byte)0x3333333333333333) + (byte)((byte)(value >> 2) & (byte)0x3333333333333333));
+                value = (byte)((byte)(value + (byte)(value >> 4)) & (byte)0x0f0f0f0f0f0f0f0f);
+
+                // to simplify codegen for smaller integral types, we fork on sizeof().
+                // The compiler will remove these branches so that no additional inefficiency
+                // is incurred
+#pragma warning disable 0162
+                if (sizeof(byte) > 1)
+                {
+                    value = (byte)(value + (byte)(value >> 8));
+                    if (sizeof(byte) > 2)
+                    {
+                        value = (byte)(value + (byte)(value >> 16));
+                        if (sizeof(byte) > 4)
+                        {
+                            value = (byte)(value + (byte)(value >> 32));
+
+                            // byte
+                            return (int)(value & (byte)0b1111111);
+                        }
+
+                        // uint
+                        return (int)(value & (byte)0b111111);
+                    }
+
+                    // ushort
+                    return (int)(value & (byte)0b11111);
+                }
+
+                // byte
+                return (int)(value & (byte)0b1111);
+#pragma warning restore 0162
+            }
+        }
+
+        /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITHOUT leading zeros
         /// </summary>
         [MemberFor(typeof(byte))]

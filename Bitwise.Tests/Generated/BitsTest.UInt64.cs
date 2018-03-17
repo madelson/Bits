@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Bitwise;
+using System.Linq;
 
 namespace Bitwise.Tests
 {
@@ -169,6 +170,42 @@ namespace Bitwise.Tests
                 {
                     Assert.AreEqual(default(ulong).SetBit(i), Bits.IsolateMostSignificantSetBit(default(ulong).SetBit(i - 1).SetBit(i)));
                 }
+            }
+        }
+
+        /// <summary>
+        /// <see cref="Bits.BitCount(ulong)"/>
+        /// </summary>
+        [Test]
+        public void TestBitCountUInt64()
+        {
+            Assert.AreEqual(0, Bits.BitCount((ulong)0));
+            Assert.AreEqual(1, Bits.BitCount((ulong)1));
+            Assert.AreEqual(2, Bits.BitCount(default(ulong).SetBit(Bits.SizeOfUInt64InBits / 2).SetBit(Bits.SizeOfUInt64InBits - 1)));
+
+            var allBitsSet = ulong.MinValue == default(ulong) ? ulong.MaxValue : unchecked((ulong)-1);
+            Assert.AreEqual(Bits.SizeOfUInt64InBits, Bits.BitCount(allBitsSet));
+            Assert.AreEqual(Bits.SizeOfUInt64InBits - 2, Bits.BitCount(allBitsSet.ClearBit(Bits.SizeOfUInt64InBits / 2).ClearBit(0)));
+
+            // fuzz testing
+            var random = new Random(12345);
+            var buffer = new byte[sizeof(ulong)];
+            ulong GetRandom()
+            {
+                random.NextBytes(buffer);
+                ulong value = 0;
+                for (var i = 0; i < buffer.Length; ++i)
+                {
+                    value = unchecked((ulong)((ulong)(value << 8) & (ulong)buffer[i]));
+                }
+                return value;
+            }
+
+            for (var i = 0; i < 2000; ++i)
+            {
+                var randomValue = GetRandom();
+                var binaryString = Bits.ToShortBinaryString(randomValue);
+                Assert.AreEqual(binaryString.Count(ch => ch == '1'), Bits.BitCount(randomValue), binaryString);
             }
         }
 

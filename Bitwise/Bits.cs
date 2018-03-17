@@ -111,6 +111,58 @@ namespace Bitwise
         public static long IsolateMostSignificantSetBit(long value) => unchecked((long)IsolateMostSignificantSetBit(ToUnsigned(value)));
 
         /// <summary>
+        /// Returns the number of set bits in <paramref name="value"/>
+        /// </summary>
+        [MemberFor(typeof(ulong))]
+        public static int BitCount(ulong value)
+        {
+            // based on http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/6-b14/java/lang/Long.java#Long.bitCount%28long%29
+            // also described here: http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
+
+            unchecked
+            {
+                value = (ulong)(value - (ulong)((ulong)(value >> 1) & (ulong)0x5555555555555555));
+                value = (ulong)((ulong)(value & (ulong)0x3333333333333333) + (ulong)((ulong)(value >> 2) & (ulong)0x3333333333333333));
+                value = (ulong)((ulong)(value + (ulong)(value >> 4)) & (ulong)0x0f0f0f0f0f0f0f0f);
+
+                // to simplify codegen for smaller integral types, we fork on sizeof().
+                // The compiler will remove these branches so that no additional inefficiency
+                // is incurred
+#pragma warning disable 0162
+                if (sizeof(ulong) > 1)
+                {
+                    value = (ulong)(value + (ulong)(value >> 8));
+                    if (sizeof(ulong) > 2)
+                    {
+                        value = (ulong)(value + (ulong)(value >> 16));
+                        if (sizeof(ulong) > 4)
+                        {
+                            value = (ulong)(value + (ulong)(value >> 32));
+
+                            // ulong
+                            return (int)(value & (ulong)0b1111111);
+                        }
+
+                        // uint
+                        return (int)(value & (ulong)0b111111);
+                    }
+
+                    // ushort
+                    return (int)(value & (ulong)0b11111);
+                }
+
+                // byte
+                return (int)(value & (ulong)0b1111);
+#pragma warning restore 0162
+            }
+        }
+
+        /// <summary>
+        /// Returns the number of set bits in <paramref name="value"/>
+        /// </summary>
+        public static int BitCount(long value) => BitCount(ToUnsigned(value));
+
+        /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITHOUT leading zeros
         /// </summary>
         public static string ToShortBinaryString(long value) => Convert.ToString(value, toBase: 2);
@@ -124,7 +176,7 @@ namespace Bitwise
         /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITHOUT leading zeros
         /// </summary>
-        [MemberFor(typeof(sbyte))] // Convert.ToString(byte, int) is defined rather than for sbyte
+        [MemberFor(typeof(sbyte))] // Convert.ToString(#, base) is defined for byte rather than for sbyte
         public static string ToShortBinaryString(sbyte value) => Convert.ToString(ToUnsigned(value), toBase: 2);
 
         /// <summary>

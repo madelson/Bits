@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Bitwise;
+using System.Linq;
 
 namespace Bitwise.Tests
 {
@@ -169,6 +170,42 @@ namespace Bitwise.Tests
                 {
                     Assert.AreEqual(default(sbyte).SetBit(i), Bits.IsolateMostSignificantSetBit(default(sbyte).SetBit(i - 1).SetBit(i)));
                 }
+            }
+        }
+
+        /// <summary>
+        /// <see cref="Bits.BitCount(sbyte)"/>
+        /// </summary>
+        [Test]
+        public void TestBitCountSByte()
+        {
+            Assert.AreEqual(0, Bits.BitCount((sbyte)0));
+            Assert.AreEqual(1, Bits.BitCount((sbyte)1));
+            Assert.AreEqual(2, Bits.BitCount(default(sbyte).SetBit(Bits.SizeOfSByteInBits / 2).SetBit(Bits.SizeOfSByteInBits - 1)));
+
+            var allBitsSet = sbyte.MinValue == default(sbyte) ? sbyte.MaxValue : unchecked((sbyte)-1);
+            Assert.AreEqual(Bits.SizeOfSByteInBits, Bits.BitCount(allBitsSet));
+            Assert.AreEqual(Bits.SizeOfSByteInBits - 2, Bits.BitCount(allBitsSet.ClearBit(Bits.SizeOfSByteInBits / 2).ClearBit(0)));
+
+            // fuzz testing
+            var random = new Random(12345);
+            var buffer = new byte[sizeof(sbyte)];
+            sbyte GetRandom()
+            {
+                random.NextBytes(buffer);
+                sbyte value = 0;
+                for (var i = 0; i < buffer.Length; ++i)
+                {
+                    value = unchecked((sbyte)((sbyte)(value << 8) & (sbyte)buffer[i]));
+                }
+                return value;
+            }
+
+            for (var i = 0; i < 2000; ++i)
+            {
+                var randomValue = GetRandom();
+                var binaryString = Bits.ToShortBinaryString(randomValue);
+                Assert.AreEqual(binaryString.Count(ch => ch == '1'), Bits.BitCount(randomValue), binaryString);
             }
         }
 

@@ -109,6 +109,53 @@ namespace Bitwise
         }
 
         /// <summary>
+        /// Returns the number of set bits in <paramref name="value"/>
+        /// </summary>
+        [MemberFor(typeof(uint))]
+        public static int BitCount(uint value)
+        {
+            // based on http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/6-b14/java/lang/Long.java#Long.bitCount%28int%29
+            // also described here: http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
+
+            unchecked
+            {
+                value = (uint)(value - (uint)((uint)(value >> 1) & (uint)0x5555555555555555));
+                value = (uint)((uint)(value & (uint)0x3333333333333333) + (uint)((uint)(value >> 2) & (uint)0x3333333333333333));
+                value = (uint)((uint)(value + (uint)(value >> 4)) & (uint)0x0f0f0f0f0f0f0f0f);
+
+                // to simplify codegen for smaller integral types, we fork on sizeof().
+                // The compiler will remove these branches so that no additional inefficiency
+                // is incurred
+#pragma warning disable 0162
+                if (sizeof(uint) > 1)
+                {
+                    value = (uint)(value + (uint)(value >> 8));
+                    if (sizeof(uint) > 2)
+                    {
+                        value = (uint)(value + (uint)(value >> 16));
+                        if (sizeof(uint) > 4)
+                        {
+                            value = (uint)(value + (uint)(value >> 32));
+
+                            // uint
+                            return (int)(value & (uint)0b1111111);
+                        }
+
+                        // uint
+                        return (int)(value & (uint)0b111111);
+                    }
+
+                    // ushort
+                    return (int)(value & (uint)0b11111);
+                }
+
+                // byte
+                return (int)(value & (uint)0b1111);
+#pragma warning restore 0162
+            }
+        }
+
+        /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITHOUT leading zeros
         /// </summary>
         [MemberFor(typeof(uint))]

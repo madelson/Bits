@@ -109,6 +109,53 @@ namespace Bitwise
         }
 
         /// <summary>
+        /// Returns the number of set bits in <paramref name="value"/>
+        /// </summary>
+        [MemberFor(typeof(ushort))]
+        public static int BitCount(ushort value)
+        {
+            // based on http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/6-b14/java/lang/Long.java#Long.bitCount%28short%29
+            // also described here: http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
+
+            unchecked
+            {
+                value = (ushort)(value - (ushort)((ushort)(value >> 1) & (ushort)0x5555555555555555));
+                value = (ushort)((ushort)(value & (ushort)0x3333333333333333) + (ushort)((ushort)(value >> 2) & (ushort)0x3333333333333333));
+                value = (ushort)((ushort)(value + (ushort)(value >> 4)) & (ushort)0x0f0f0f0f0f0f0f0f);
+
+                // to simplify codegen for smaller integral types, we fork on sizeof().
+                // The compiler will remove these branches so that no additional inefficiency
+                // is incurred
+#pragma warning disable 0162
+                if (sizeof(ushort) > 1)
+                {
+                    value = (ushort)(value + (ushort)(value >> 8));
+                    if (sizeof(ushort) > 2)
+                    {
+                        value = (ushort)(value + (ushort)(value >> 16));
+                        if (sizeof(ushort) > 4)
+                        {
+                            value = (ushort)(value + (ushort)(value >> 32));
+
+                            // ushort
+                            return (int)(value & (ushort)0b1111111);
+                        }
+
+                        // uint
+                        return (int)(value & (ushort)0b111111);
+                    }
+
+                    // ushort
+                    return (int)(value & (ushort)0b11111);
+                }
+
+                // byte
+                return (int)(value & (ushort)0b1111);
+#pragma warning restore 0162
+            }
+        }
+
+        /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITHOUT leading zeros
         /// </summary>
         [MemberFor(typeof(ushort))]

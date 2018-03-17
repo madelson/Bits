@@ -80,6 +80,11 @@ namespace Bitwise
         public static sbyte IsolateMostSignificantSetBit(sbyte value) => unchecked((sbyte)IsolateMostSignificantSetBit(ToUnsigned(value)));
 
         /// <summary>
+        /// Returns the number of set bits in <paramref name="value"/>
+        /// </summary>
+        public static int BitCount(sbyte value) => BitCount(ToUnsigned(value));
+
+        /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITH ALL leading zeros
         /// </summary>
         public static string ToLongBinaryString(sbyte value) => ToShortBinaryString(value).PadLeft(SizeOfSByteInBits, '0');

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Bitwise;
+using System.Linq;
 
 namespace Bitwise.Tests
 {
@@ -166,6 +167,42 @@ namespace Bitwise.Tests
                 {
                     Assert.AreEqual(default(long).SetBit(i), Bits.IsolateMostSignificantSetBit(default(long).SetBit(i - 1).SetBit(i)));
                 }
+            }
+        }
+
+        /// <summary>
+        /// <see cref="Bits.BitCount(long)"/>
+        /// </summary>
+        [Test]
+        public void TestBitCountInt64()
+        {
+            Assert.AreEqual(0, Bits.BitCount((long)0));
+            Assert.AreEqual(1, Bits.BitCount((long)1));
+            Assert.AreEqual(2, Bits.BitCount(default(long).SetBit(Bits.SizeOfInt64InBits / 2).SetBit(Bits.SizeOfInt64InBits - 1)));
+
+            var allBitsSet = long.MinValue == default(long) ? long.MaxValue : unchecked((long)-1);
+            Assert.AreEqual(Bits.SizeOfInt64InBits, Bits.BitCount(allBitsSet));
+            Assert.AreEqual(Bits.SizeOfInt64InBits - 2, Bits.BitCount(allBitsSet.ClearBit(Bits.SizeOfInt64InBits / 2).ClearBit(0)));
+
+            // fuzz testing
+            var random = new Random(12345);
+            var buffer = new byte[sizeof(long)];
+            long GetRandom()
+            {
+                random.NextBytes(buffer);
+                long value = 0;
+                for (var i = 0; i < buffer.Length; ++i)
+                {
+                    value = unchecked((long)((long)(value << 8) & (long)buffer[i]));
+                }
+                return value;
+            }
+
+            for (var i = 0; i < 2000; ++i)
+            {
+                var randomValue = GetRandom();
+                var binaryString = Bits.ToShortBinaryString(randomValue);
+                Assert.AreEqual(binaryString.Count(ch => ch == '1'), Bits.BitCount(randomValue), binaryString);
             }
         }
 

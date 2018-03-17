@@ -80,6 +80,11 @@ namespace Bitwise
         public static short IsolateMostSignificantSetBit(short value) => unchecked((short)IsolateMostSignificantSetBit(ToUnsigned(value)));
 
         /// <summary>
+        /// Returns the number of set bits in <paramref name="value"/>
+        /// </summary>
+        public static int BitCount(short value) => BitCount(ToUnsigned(value));
+
+        /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITHOUT leading zeros
         /// </summary>
         public static string ToShortBinaryString(short value) => Convert.ToString(value, toBase: 2);
