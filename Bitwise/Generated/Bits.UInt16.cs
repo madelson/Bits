@@ -72,8 +72,7 @@ namespace Bitwise
         /// <summary>
         /// Returns <paramref name="value"/> with all bits cleared EXCEPT the least significant bit
         /// </summary>
-        [MemberFor(typeof(ushort))]
-        public static ushort ClearAllButLeastSignificantBit(ushort value) => unchecked((ushort)ClearAllButLeastSignificantBit((short)value));
+        public static ushort ClearAllButLeastSignificantBit(ushort value) => (ushort)(value & unchecked((ushort)0 - value));
 
         /// <summary>
         /// Returns <paramref name="value"/> with all bits cleared EXCEPT the most significant bit

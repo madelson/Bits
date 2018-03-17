@@ -69,6 +69,11 @@ namespace Bitwise
         /// </summary>
         public static ulong ClearLeastSignificantBit(ulong value) => (ulong)(value & unchecked(value - 1));
 
+        /// <summary>
+        /// Returns <paramref name="value"/> with all bits cleared EXCEPT the least significant bit
+        /// </summary>
+        public static ulong ClearAllButLeastSignificantBit(ulong value) => (ulong)(value & unchecked((ulong)0 - value));
+
         
     }
 }

@@ -72,12 +72,14 @@ namespace Bitwise
         /// <summary>
         /// Returns <paramref name="value"/> with all bits cleared EXCEPT the least significant bit
         /// </summary>
-        public static int ClearAllButLeastSignificantBit(int value) => (int)(value & unchecked(-value));
+        public static int ClearAllButLeastSignificantBit(int value) => (int)(value & unchecked((int)0 - value));
 
         /// <summary>
         /// Returns <paramref name="value"/> with all bits cleared EXCEPT the most significant bit
         /// </summary>
         public static int ClearAllButMostSignificantBit(int value) => unchecked((int)ClearAllButMostSignificantBit(ToUnsigned(value)));
+
+        // TODO rename all ClearAllButXBit to IsolateXOneBit (or SetBit) to be more accurrate. Doc comments are wrong too (don't specify set/one)
 
         
     }

@@ -69,13 +69,7 @@ namespace Bitwise
         /// <summary>
         /// Returns <paramref name="value"/> with all bits cleared EXCEPT the least significant bit
         /// </summary>
-        public static long ClearAllButLeastSignificantBit(long value) => (long)(value & unchecked(-value));
-
-        /// <summary>
-        /// Returns <paramref name="value"/> with all bits cleared EXCEPT the least significant bit
-        /// </summary>
-        [MemberFor(typeof(ulong))]
-        public static ulong ClearAllButLeastSignificantBit(ulong value) => unchecked((ulong)ClearAllButLeastSignificantBit((long)value));
+        public static long ClearAllButLeastSignificantBit(long value) => (long)(value & unchecked((long)0 - value));
 
         /// <summary>
         /// Returns <paramref name="value"/> with all bits cleared EXCEPT the most significant bit
@@ -115,6 +109,8 @@ namespace Bitwise
         /// Returns <paramref name="value"/> with all bits cleared EXCEPT the most significant bit
         /// </summary>
         public static long ClearAllButMostSignificantBit(long value) => unchecked((long)ClearAllButMostSignificantBit(ToUnsigned(value)));
+
+        // TODO rename all ClearAllButXBit to IsolateXOneBit (or SetBit) to be more accurrate. Doc comments are wrong too (don't specify set/one)
 
         // END MEMBERS
     }
