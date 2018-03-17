@@ -78,6 +78,11 @@ namespace Bitwise
         /// Returns <paramref name="value"/> with all bits cleared EXCEPT the most significant set bit
         /// </summary>
         public static sbyte IsolateMostSignificantSetBit(sbyte value) => unchecked((sbyte)IsolateMostSignificantSetBit(ToUnsigned(value)));
+
+        /// <summary>
+        /// Returns the binary representation of <paramref name="value"/> WITH ALL leading zeros
+        /// </summary>
+        public static string ToLongBinaryString(sbyte value) => ToShortBinaryString(value).PadLeft(SizeOfSByteInBits, '0');
         
         
     }

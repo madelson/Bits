@@ -172,6 +172,36 @@ namespace Bitwise.Tests
             }
         }
 
+        /// <summary>
+        /// <see cref="Bits.ToShortBinaryString(ulong)"/>
+        /// </summary>
+        [Test]
+        public void TestToShortBinaryStringUInt64()
+        {
+            Assert.AreEqual("0", Bits.ToShortBinaryString((ulong)0));
+            Assert.AreEqual("1", Bits.ToShortBinaryString((ulong)1));
+            Assert.AreEqual("10101010", Bits.ToShortBinaryString(unchecked((ulong)0b10101010)));
+            Assert.AreEqual("1010101", Bits.ToShortBinaryString(unchecked((ulong)0b01010101)));
+
+            var allBitsSet = ulong.MinValue == default(ulong) ? ulong.MaxValue : unchecked((ulong)-1);
+            Assert.AreEqual(new string('1', count: Bits.SizeOfUInt64InBits), Bits.ToShortBinaryString(allBitsSet));
+        }
+
+        /// <summary>
+        /// <see cref="Bits.ToLongBinaryString(ulong)"/>
+        /// </summary>
+        [Test]
+        public void TestToLongBinaryStringUInt64()
+        {
+            Assert.AreEqual(new string('0', Bits.SizeOfUInt64InBits), Bits.ToLongBinaryString((ulong)0));
+            Assert.AreEqual(new string('0', Bits.SizeOfUInt64InBits - 1) + "1", Bits.ToLongBinaryString((ulong)1));
+            Assert.AreEqual(new string('0', Bits.SizeOfUInt64InBits - 8) + "10101010", Bits.ToLongBinaryString(unchecked((ulong)0b10101010)));
+            Assert.AreEqual(new string('0', Bits.SizeOfUInt64InBits - 7) + "1010101", Bits.ToLongBinaryString(unchecked((ulong)0b01010101)));
+
+            var allBitsSet = ulong.MinValue == default(ulong) ? ulong.MaxValue : unchecked((ulong)-1);
+            Assert.AreEqual(new string('1', count: Bits.SizeOfUInt64InBits), Bits.ToLongBinaryString(allBitsSet));
+        }
+
         
     }
 }

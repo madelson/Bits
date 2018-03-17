@@ -78,6 +78,16 @@ namespace Bitwise
         /// Returns <paramref name="value"/> with all bits cleared EXCEPT the most significant set bit
         /// </summary>
         public static short IsolateMostSignificantSetBit(short value) => unchecked((short)IsolateMostSignificantSetBit(ToUnsigned(value)));
+
+        /// <summary>
+        /// Returns the binary representation of <paramref name="value"/> WITHOUT leading zeros
+        /// </summary>
+        public static string ToShortBinaryString(short value) => Convert.ToString(value, toBase: 2);
+
+        /// <summary>
+        /// Returns the binary representation of <paramref name="value"/> WITH ALL leading zeros
+        /// </summary>
+        public static string ToLongBinaryString(short value) => ToShortBinaryString(value).PadLeft(SizeOfInt16InBits, '0');
         
         
     }

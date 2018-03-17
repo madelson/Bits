@@ -108,6 +108,17 @@ namespace Bitwise
             return (byte)(value - (byte)(value >> 1));
         }
 
+        /// <summary>
+        /// Returns the binary representation of <paramref name="value"/> WITHOUT leading zeros
+        /// </summary>
+        [MemberFor(typeof(byte))]
+        public static string ToShortBinaryString(byte value) => ToShortBinaryString(unchecked((sbyte)value));
+
+        /// <summary>
+        /// Returns the binary representation of <paramref name="value"/> WITH ALL leading zeros
+        /// </summary>
+        public static string ToLongBinaryString(byte value) => ToShortBinaryString(value).PadLeft(SizeOfByteInBits, '0');
+        
         
     }
 }

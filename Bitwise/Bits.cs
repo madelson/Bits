@@ -109,6 +109,28 @@ namespace Bitwise
         /// Returns <paramref name="value"/> with all bits cleared EXCEPT the most significant set bit
         /// </summary>
         public static long IsolateMostSignificantSetBit(long value) => unchecked((long)IsolateMostSignificantSetBit(ToUnsigned(value)));
+
+        /// <summary>
+        /// Returns the binary representation of <paramref name="value"/> WITHOUT leading zeros
+        /// </summary>
+        public static string ToShortBinaryString(long value) => Convert.ToString(value, toBase: 2);
+
+        /// <summary>
+        /// Returns the binary representation of <paramref name="value"/> WITHOUT leading zeros
+        /// </summary>
+        [MemberFor(typeof(ulong))]
+        public static string ToShortBinaryString(ulong value) => ToShortBinaryString(unchecked((long)value));
+
+        /// <summary>
+        /// Returns the binary representation of <paramref name="value"/> WITHOUT leading zeros
+        /// </summary>
+        [MemberFor(typeof(sbyte))] // Convert.ToString(byte, int) is defined rather than for sbyte
+        public static string ToShortBinaryString(sbyte value) => Convert.ToString(ToUnsigned(value), toBase: 2);
+
+        /// <summary>
+        /// Returns the binary representation of <paramref name="value"/> WITH ALL leading zeros
+        /// </summary>
+        public static string ToLongBinaryString(long value) => ToShortBinaryString(value).PadLeft(SizeOfInt64InBits, '0');
         
         // END MEMBERS
     }

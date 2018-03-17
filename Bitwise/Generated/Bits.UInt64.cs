@@ -74,6 +74,11 @@ namespace Bitwise
         /// </summary>
         public static ulong IsolateLeastSignificantSetBit(ulong value) => (ulong)(value & unchecked((ulong)0 - value));
 
+        /// <summary>
+        /// Returns the binary representation of <paramref name="value"/> WITH ALL leading zeros
+        /// </summary>
+        public static string ToLongBinaryString(ulong value) => ToShortBinaryString(value).PadLeft(SizeOfUInt64InBits, '0');
+        
         
     }
 }

@@ -172,6 +172,36 @@ namespace Bitwise.Tests
             }
         }
 
+        /// <summary>
+        /// <see cref="Bits.ToShortBinaryString(uint)"/>
+        /// </summary>
+        [Test]
+        public void TestToShortBinaryStringUInt32()
+        {
+            Assert.AreEqual("0", Bits.ToShortBinaryString((uint)0));
+            Assert.AreEqual("1", Bits.ToShortBinaryString((uint)1));
+            Assert.AreEqual("10101010", Bits.ToShortBinaryString(unchecked((uint)0b10101010)));
+            Assert.AreEqual("1010101", Bits.ToShortBinaryString(unchecked((uint)0b01010101)));
+
+            var allBitsSet = uint.MinValue == default(uint) ? uint.MaxValue : unchecked((uint)-1);
+            Assert.AreEqual(new string('1', count: Bits.SizeOfUInt32InBits), Bits.ToShortBinaryString(allBitsSet));
+        }
+
+        /// <summary>
+        /// <see cref="Bits.ToLongBinaryString(uint)"/>
+        /// </summary>
+        [Test]
+        public void TestToLongBinaryStringUInt32()
+        {
+            Assert.AreEqual(new string('0', Bits.SizeOfUInt32InBits), Bits.ToLongBinaryString((uint)0));
+            Assert.AreEqual(new string('0', Bits.SizeOfUInt32InBits - 1) + "1", Bits.ToLongBinaryString((uint)1));
+            Assert.AreEqual(new string('0', Bits.SizeOfUInt32InBits - 8) + "10101010", Bits.ToLongBinaryString(unchecked((uint)0b10101010)));
+            Assert.AreEqual(new string('0', Bits.SizeOfUInt32InBits - 7) + "1010101", Bits.ToLongBinaryString(unchecked((uint)0b01010101)));
+
+            var allBitsSet = uint.MinValue == default(uint) ? uint.MaxValue : unchecked((uint)-1);
+            Assert.AreEqual(new string('1', count: Bits.SizeOfUInt32InBits), Bits.ToLongBinaryString(allBitsSet));
+        }
+
         
     }
 }
