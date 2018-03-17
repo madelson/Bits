@@ -67,15 +67,15 @@ namespace Bitwise
         public static long ClearLeastSignificantBit(long value) => (long)(value & unchecked(value - 1));
 
         /// <summary>
-        /// Returns <paramref name="value"/> with all bits cleared EXCEPT the least significant bit
+        /// Returns <paramref name="value"/> with all bits cleared EXCEPT the least significant set bit
         /// </summary>
-        public static long ClearAllButLeastSignificantBit(long value) => (long)(value & unchecked((long)0 - value));
+        public static long IsolateLeastSignificantSetBit(long value) => (long)(value & unchecked((long)0 - value));
 
         /// <summary>
-        /// Returns <paramref name="value"/> with all bits cleared EXCEPT the most significant bit
+        /// Returns <paramref name="value"/> with all bits cleared EXCEPT the most significant set bit
         /// </summary>
         [MemberFor(typeof(ulong))]
-        public static ulong ClearAllButMostSignificantBit(ulong value)
+        public static ulong IsolateMostSignificantSetBit(ulong value)
         {
             // the idea here is to steadily set all bits less significant than the most significant bit,
             // and then follow up by clearing them all. See https://stackoverflow.com/questions/28846601/java-integer-highestonebit-in-c-sharp
@@ -106,12 +106,10 @@ namespace Bitwise
         }
 
         /// <summary>
-        /// Returns <paramref name="value"/> with all bits cleared EXCEPT the most significant bit
+        /// Returns <paramref name="value"/> with all bits cleared EXCEPT the most significant set bit
         /// </summary>
-        public static long ClearAllButMostSignificantBit(long value) => unchecked((long)ClearAllButMostSignificantBit(ToUnsigned(value)));
-
-        // TODO rename all ClearAllButXBit to IsolateXOneBit (or SetBit) to be more accurrate. Doc comments are wrong too (don't specify set/one)
-
+        public static long IsolateMostSignificantSetBit(long value) => unchecked((long)IsolateMostSignificantSetBit(ToUnsigned(value)));
+        
         // END MEMBERS
     }
 }

@@ -135,39 +135,39 @@ namespace Bitwise.Tests
         }
 
         /// <summary>
-        /// <see cref="Bits.ClearAllButLeastSignificantBit(byte)"/>
+        /// <see cref="Bits.IsolateLeastSignificantSetBit(byte)"/>
         /// </summary>
         [Test]
-        public void TestClearAllButLeastSignificantBitByte()
+        public void TestIsolateLeastSignificantSetBitByte()
         {
-            Assert.AreEqual((byte)0b000100, Bits.ClearAllButLeastSignificantBit((byte)0b101100));
-            Assert.AreEqual(default(byte), Bits.ClearAllButLeastSignificantBit(default(byte)));
+            Assert.AreEqual((byte)0b000100, Bits.IsolateLeastSignificantSetBit((byte)0b101100));
+            Assert.AreEqual(default(byte), Bits.IsolateLeastSignificantSetBit(default(byte)));
 
             for (var i = 0; i < Bits.SizeOfByteInBits; ++i)
             {
-                Assert.AreEqual(default(byte).SetBit(i), Bits.ClearAllButLeastSignificantBit((default(byte).SetBit(i))));
+                Assert.AreEqual(default(byte).SetBit(i), Bits.IsolateLeastSignificantSetBit((default(byte).SetBit(i))));
                 if (i > 0)
                 {
-                    Assert.AreEqual(default(byte).SetBit(i - 1), Bits.ClearAllButLeastSignificantBit(default(byte).SetBit(i - 1).SetBit(i)));
+                    Assert.AreEqual(default(byte).SetBit(i - 1), Bits.IsolateLeastSignificantSetBit(default(byte).SetBit(i - 1).SetBit(i)));
                 }
             }
         }
 
         /// <summary>
-        /// <see cref="Bits.ClearAllButMostSignificantBit(byte)"/>
+        /// <see cref="Bits.IsolateMostSignificantSetBit(byte)"/>
         /// </summary>
         [Test]
-        public void TestClearAllButMostSignificantBitByte()
+        public void TestIsolateMostSignificantSetBitByte()
         {
-            Assert.AreEqual((byte)0b100000, Bits.ClearAllButMostSignificantBit((byte)0b101100));
-            Assert.AreEqual(default(byte), Bits.ClearAllButMostSignificantBit(default(byte)));
+            Assert.AreEqual((byte)0b100000, Bits.IsolateMostSignificantSetBit((byte)0b101100));
+            Assert.AreEqual(default(byte), Bits.IsolateMostSignificantSetBit(default(byte)));
 
             for (var i = 0; i < Bits.SizeOfByteInBits; ++i)
             {
-                Assert.AreEqual(default(byte).SetBit(i), Bits.ClearAllButMostSignificantBit((default(byte).SetBit(i))));
+                Assert.AreEqual(default(byte).SetBit(i), Bits.IsolateMostSignificantSetBit((default(byte).SetBit(i))));
                 if (i > 0)
                 {
-                    Assert.AreEqual(default(byte).SetBit(i), Bits.ClearAllButMostSignificantBit(default(byte).SetBit(i - 1).SetBit(i)));
+                    Assert.AreEqual(default(byte).SetBit(i), Bits.IsolateMostSignificantSetBit(default(byte).SetBit(i - 1).SetBit(i)));
                 }
             }
         }

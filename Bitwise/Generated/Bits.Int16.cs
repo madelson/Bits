@@ -70,17 +70,15 @@ namespace Bitwise
         public static short ClearLeastSignificantBit(short value) => (short)(value & unchecked(value - 1));
 
         /// <summary>
-        /// Returns <paramref name="value"/> with all bits cleared EXCEPT the least significant bit
+        /// Returns <paramref name="value"/> with all bits cleared EXCEPT the least significant set bit
         /// </summary>
-        public static short ClearAllButLeastSignificantBit(short value) => (short)(value & unchecked((short)0 - value));
+        public static short IsolateLeastSignificantSetBit(short value) => (short)(value & unchecked((short)0 - value));
 
         /// <summary>
-        /// Returns <paramref name="value"/> with all bits cleared EXCEPT the most significant bit
+        /// Returns <paramref name="value"/> with all bits cleared EXCEPT the most significant set bit
         /// </summary>
-        public static short ClearAllButMostSignificantBit(short value) => unchecked((short)ClearAllButMostSignificantBit(ToUnsigned(value)));
-
-        // TODO rename all ClearAllButXBit to IsolateXOneBit (or SetBit) to be more accurrate. Doc comments are wrong too (don't specify set/one)
-
+        public static short IsolateMostSignificantSetBit(short value) => unchecked((short)IsolateMostSignificantSetBit(ToUnsigned(value)));
+        
         
     }
 }

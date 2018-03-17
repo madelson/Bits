@@ -70,15 +70,15 @@ namespace Bitwise
         public static ushort ClearLeastSignificantBit(ushort value) => (ushort)(value & unchecked(value - 1));
 
         /// <summary>
-        /// Returns <paramref name="value"/> with all bits cleared EXCEPT the least significant bit
+        /// Returns <paramref name="value"/> with all bits cleared EXCEPT the least significant set bit
         /// </summary>
-        public static ushort ClearAllButLeastSignificantBit(ushort value) => (ushort)(value & unchecked((ushort)0 - value));
+        public static ushort IsolateLeastSignificantSetBit(ushort value) => (ushort)(value & unchecked((ushort)0 - value));
 
         /// <summary>
-        /// Returns <paramref name="value"/> with all bits cleared EXCEPT the most significant bit
+        /// Returns <paramref name="value"/> with all bits cleared EXCEPT the most significant set bit
         /// </summary>
         [MemberFor(typeof(ushort))]
-        public static ushort ClearAllButMostSignificantBit(ushort value)
+        public static ushort IsolateMostSignificantSetBit(ushort value)
         {
             // the idea here is to steadily set all bits less significant than the most significant bit,
             // and then follow up by clearing them all. See https://stackoverflow.com/questions/28846601/java-integer-highestonebit-in-c-sharp
