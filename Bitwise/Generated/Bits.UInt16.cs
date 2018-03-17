@@ -178,7 +178,7 @@ namespace Bitwise
                 // result of which is that the bits needed to calculate the rest of the answer are now
                 // the top bits
 
-                var n = SizeOfUInt16InBits - 1;
+                var count = SizeOfUInt16InBits - 1;
                 ushort y;
 
                 // to simplify codegen for smaller integral types, we fork on sizeof().
@@ -188,29 +188,69 @@ namespace Bitwise
                 if (sizeof(ushort) > 4)
                 {
                     y = (ushort)(value << 32);
-                    if (y != 0) { n -= 32; value = y; }
+                    if (y != 0) { count -= 32; value = y; }
                 }
 
                 if (sizeof(ushort) > 2)
                 {
                     y = (ushort)(value << 16);
-                    if (y != 0) { n -= 16; value = y; }
+                    if (y != 0) { count -= 16; value = y; }
                 }
 
                 if (sizeof(ushort) > 1)
                 {
                     y = (ushort)(value << 8);
-                    if (y != 0) { n -= 8; value = y; }
+                    if (y != 0) { count -= 8; value = y; }
                 }
 #pragma warning restore 0162
 
                 y = (ushort)(value << 4);
-                if (y != 0) { n -= 4; value = y; }
+                if (y != 0) { count -= 4; value = y; }
 
                 y = (ushort)(value << 2);
-                if (y != 0) { n -= 2; value = y; }
+                if (y != 0) { count -= 2; value = y; }
 
-                return (int)(n - (int)((ushort)(value << 1) >> (SizeOfUInt16InBits - 1)));
+                return (int)(count - (int)((ushort)(value << 1) >> (SizeOfUInt16InBits - 1)));
+            }
+        }
+
+        /// <summary>
+        /// Returns the number of zero bits preceding the most-significant one-bit in the binary representation of <paramref name="value"/>
+        /// (as returned by <see cref="Bits.ToLongBinaryString(short)"/>). If <paramref name="value"/> is zero, returns the number of bits
+        /// in the <see cref="short"/> data type
+        /// </summary>
+        [MemberFor(typeof(ushort))]
+        public static int LeadingZeroBitCount(ushort value)
+        {
+            // based on http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/8u40-b25/java/lang/Integer.java#Integer.numberOfLeadingZeros%28int%29
+
+            if (value == (ushort)0) { return SizeOfUInt16InBits; }
+
+            unchecked
+            {
+                var count = 1;
+
+                // to simplify codegen for smaller integral types, we fork on sizeof().
+                // The compiler will remove these branches so that no additional inefficiency
+                // is incurred
+#pragma warning disable 0162
+                if (sizeof(ushort) > 4)
+                {
+                    if ((ushort)(value >> (SizeOfUInt16InBits - 32)) == 0) { count += 32; value = (ushort)(value << 32); }
+                }
+                if (sizeof(ushort) > 2)
+                {
+                    if ((ushort)(value >> (SizeOfUInt16InBits - 16)) == 0) { count += 16; value = (ushort)(value << 16); }
+                }
+                if (sizeof(ushort) > 1)
+                {
+                    if ((ushort)(value >> (SizeOfUInt16InBits - 8)) == 0) { count += 8; value = (ushort)(value << 8); }
+                }
+#pragma warning restore 0162
+                if ((ushort)(value >> (SizeOfUInt16InBits - 4)) == 0) { count += 4; value = (ushort)(value << 4); }
+                if ((ushort)(value >> (SizeOfUInt16InBits - 2)) == 0) { count += 2; value = (ushort)(value << 2); }
+                count -= (int)(value >> (SizeOfUInt16InBits - 1));
+                return count;
             }
         }
 

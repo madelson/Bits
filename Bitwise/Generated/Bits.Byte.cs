@@ -178,7 +178,7 @@ namespace Bitwise
                 // result of which is that the bits needed to calculate the rest of the answer are now
                 // the top bits
 
-                var n = SizeOfByteInBits - 1;
+                var count = SizeOfByteInBits - 1;
                 byte y;
 
                 // to simplify codegen for smaller integral types, we fork on sizeof().
@@ -188,29 +188,69 @@ namespace Bitwise
                 if (sizeof(byte) > 4)
                 {
                     y = (byte)(value << 32);
-                    if (y != 0) { n -= 32; value = y; }
+                    if (y != 0) { count -= 32; value = y; }
                 }
 
                 if (sizeof(byte) > 2)
                 {
                     y = (byte)(value << 16);
-                    if (y != 0) { n -= 16; value = y; }
+                    if (y != 0) { count -= 16; value = y; }
                 }
 
                 if (sizeof(byte) > 1)
                 {
                     y = (byte)(value << 8);
-                    if (y != 0) { n -= 8; value = y; }
+                    if (y != 0) { count -= 8; value = y; }
                 }
 #pragma warning restore 0162
 
                 y = (byte)(value << 4);
-                if (y != 0) { n -= 4; value = y; }
+                if (y != 0) { count -= 4; value = y; }
 
                 y = (byte)(value << 2);
-                if (y != 0) { n -= 2; value = y; }
+                if (y != 0) { count -= 2; value = y; }
 
-                return (int)(n - (int)((byte)(value << 1) >> (SizeOfByteInBits - 1)));
+                return (int)(count - (int)((byte)(value << 1) >> (SizeOfByteInBits - 1)));
+            }
+        }
+
+        /// <summary>
+        /// Returns the number of zero bits preceding the most-significant one-bit in the binary representation of <paramref name="value"/>
+        /// (as returned by <see cref="Bits.ToLongBinaryString(sbyte)"/>). If <paramref name="value"/> is zero, returns the number of bits
+        /// in the <see cref="sbyte"/> data type
+        /// </summary>
+        [MemberFor(typeof(byte))]
+        public static int LeadingZeroBitCount(byte value)
+        {
+            // based on http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/8u40-b25/java/lang/Integer.java#Integer.numberOfLeadingZeros%28int%29
+
+            if (value == (byte)0) { return SizeOfByteInBits; }
+
+            unchecked
+            {
+                var count = 1;
+
+                // to simplify codegen for smaller integral types, we fork on sizeof().
+                // The compiler will remove these branches so that no additional inefficiency
+                // is incurred
+#pragma warning disable 0162
+                if (sizeof(byte) > 4)
+                {
+                    if ((byte)(value >> (SizeOfByteInBits - 32)) == 0) { count += 32; value = (byte)(value << 32); }
+                }
+                if (sizeof(byte) > 2)
+                {
+                    if ((byte)(value >> (SizeOfByteInBits - 16)) == 0) { count += 16; value = (byte)(value << 16); }
+                }
+                if (sizeof(byte) > 1)
+                {
+                    if ((byte)(value >> (SizeOfByteInBits - 8)) == 0) { count += 8; value = (byte)(value << 8); }
+                }
+#pragma warning restore 0162
+                if ((byte)(value >> (SizeOfByteInBits - 4)) == 0) { count += 4; value = (byte)(value << 4); }
+                if ((byte)(value >> (SizeOfByteInBits - 2)) == 0) { count += 2; value = (byte)(value << 2); }
+                count -= (int)(value >> (SizeOfByteInBits - 1));
+                return count;
             }
         }
 

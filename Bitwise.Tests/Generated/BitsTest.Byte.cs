@@ -217,7 +217,32 @@ namespace Bitwise.Tests
             {
                 var randomValue = this.GetRandomByte();
                 var binaryString = Bits.ToShortBinaryString(randomValue);
-                Assert.AreEqual(binaryString == "0" ? 8 * sizeof(byte) : binaryString.Length - binaryString.TrimEnd('0').Length, Bits.TrailingZeroBitCount(randomValue));
+                Assert.AreEqual(binaryString == "0" ? Bits.SizeOfByteInBits : binaryString.Length - binaryString.TrimEnd('0').Length, Bits.TrailingZeroBitCount(randomValue));
+            }
+        }
+
+        /// <summary>
+        /// <see cref="Bits.LeadingZeroBitCount(byte)"/>
+        /// </summary>
+        [Test]
+        public void TestLeadingZeroBitCountByte()
+        {
+            Assert.AreEqual(Bits.SizeOfByteInBits, Bits.LeadingZeroBitCount((byte)0));
+            var allBitsSet = byte.MinValue == default(byte) ? byte.MaxValue : unchecked((byte)-1);
+            Assert.AreEqual(0, Bits.LeadingZeroBitCount(allBitsSet));
+
+            for (var i = Bits.SizeOfByteInBits - 1; i >= 0; --i)
+            {
+                allBitsSet = allBitsSet.ClearBit(i);
+                Assert.AreEqual(Bits.SizeOfByteInBits - i, Bits.LeadingZeroBitCount(allBitsSet));
+            }
+
+            // fuzz testing
+            for (var i = 0; i < FuzzTestIterations; ++i)
+            {
+                var randomValue = this.GetRandomByte();
+                var binaryString = Bits.ToShortBinaryString(randomValue);
+                Assert.AreEqual(binaryString == "0" ? Bits.SizeOfByteInBits : Bits.SizeOfByteInBits - binaryString.Length, Bits.LeadingZeroBitCount(randomValue));
             }
         }
 

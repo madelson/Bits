@@ -92,6 +92,13 @@ namespace Bitwise
         public static int TrailingZeroBitCount(short value) => TrailingZeroBitCount(ToUnsigned(value));
 
         /// <summary>
+        /// Returns the number of zero bits preceding the most-significant one-bit in the binary representation of <paramref name="value"/>
+        /// (as returned by <see cref="Bits.ToLongBinaryString(short)"/>). If <paramref name="value"/> is zero, returns the number of bits
+        /// in the <see cref="short"/> data type
+        /// </summary>
+        public static int LeadingZeroBitCount(short value) => LeadingZeroBitCount(ToUnsigned(value));
+
+        /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITHOUT leading zeros
         /// </summary>
         public static string ToShortBinaryString(short value) => Convert.ToString(value, toBase: 2);

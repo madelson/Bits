@@ -190,7 +190,7 @@ namespace Bitwise
                 // result of which is that the bits needed to calculate the rest of the answer are now
                 // the top bits
 
-                var n = SizeOfUInt64InBits - 1;
+                var count = SizeOfUInt64InBits - 1;
                 ulong y;
 
                 // to simplify codegen for smaller integral types, we fork on sizeof().
@@ -200,29 +200,29 @@ namespace Bitwise
                 if (sizeof(ulong) > 4)
                 {
                     y = (ulong)(value << 32);
-                    if (y != 0) { n -= 32; value = y; }
+                    if (y != 0) { count -= 32; value = y; }
                 }
 
                 if (sizeof(ulong) > 2)
                 {
                     y = (ulong)(value << 16);
-                    if (y != 0) { n -= 16; value = y; }
+                    if (y != 0) { count -= 16; value = y; }
                 }
 
                 if (sizeof(ulong) > 1)
                 {
                     y = (ulong)(value << 8);
-                    if (y != 0) { n -= 8; value = y; }
+                    if (y != 0) { count -= 8; value = y; }
                 }
 #pragma warning restore 0162
 
                 y = (ulong)(value << 4);
-                if (y != 0) { n -= 4; value = y; }
+                if (y != 0) { count -= 4; value = y; }
 
                 y = (ulong)(value << 2);
-                if (y != 0) { n -= 2; value = y; }
+                if (y != 0) { count -= 2; value = y; }
 
-                return (int)(n - (int)((ulong)(value << 1) >> (SizeOfUInt64InBits - 1)));
+                return (int)(count - (int)((ulong)(value << 1) >> (SizeOfUInt64InBits - 1)));
             }
         }
 
@@ -232,6 +232,53 @@ namespace Bitwise
         /// in the <see cref="long"/> data type
         /// </summary>
         public static int TrailingZeroBitCount(long value) => TrailingZeroBitCount(ToUnsigned(value));
+
+        /// <summary>
+        /// Returns the number of zero bits preceding the most-significant one-bit in the binary representation of <paramref name="value"/>
+        /// (as returned by <see cref="Bits.ToLongBinaryString(long)"/>). If <paramref name="value"/> is zero, returns the number of bits
+        /// in the <see cref="long"/> data type
+        /// </summary>
+        [MemberFor(typeof(ulong))]
+        public static int LeadingZeroBitCount(ulong value)
+        {
+            // based on http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/8u40-b25/java/lang/Integer.java#Integer.numberOfLeadingZeros%28int%29
+
+            if (value == (ulong)0) { return SizeOfUInt64InBits; }
+
+            unchecked
+            {
+                var count = 1;
+
+                // to simplify codegen for smaller integral types, we fork on sizeof().
+                // The compiler will remove these branches so that no additional inefficiency
+                // is incurred
+#pragma warning disable 0162
+                if (sizeof(ulong) > 4)
+                {
+                    if ((ulong)(value >> (SizeOfUInt64InBits - 32)) == 0) { count += 32; value = (ulong)(value << 32); }
+                }
+                if (sizeof(ulong) > 2)
+                {
+                    if ((ulong)(value >> (SizeOfUInt64InBits - 16)) == 0) { count += 16; value = (ulong)(value << 16); }
+                }
+                if (sizeof(ulong) > 1)
+                {
+                    if ((ulong)(value >> (SizeOfUInt64InBits - 8)) == 0) { count += 8; value = (ulong)(value << 8); }
+                }
+#pragma warning restore 0162
+                if ((ulong)(value >> (SizeOfUInt64InBits - 4)) == 0) { count += 4; value = (ulong)(value << 4); }
+                if ((ulong)(value >> (SizeOfUInt64InBits - 2)) == 0) { count += 2; value = (ulong)(value << 2); }
+                count -= (int)(value >> (SizeOfUInt64InBits - 1));
+                return count;
+            }
+        }
+
+        /// <summary>
+        /// Returns the number of zero bits preceding the most-significant one-bit in the binary representation of <paramref name="value"/>
+        /// (as returned by <see cref="Bits.ToLongBinaryString(long)"/>). If <paramref name="value"/> is zero, returns the number of bits
+        /// in the <see cref="long"/> data type
+        /// </summary>
+        public static int LeadingZeroBitCount(long value) => LeadingZeroBitCount(ToUnsigned(value));
 
         /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITHOUT leading zeros
