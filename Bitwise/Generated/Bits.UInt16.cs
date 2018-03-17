@@ -12,6 +12,7 @@ namespace Bitwise
         /// <summary>
         /// Size of the <see cref="ushort"/> type in bits
         /// </summary>
+        [MemberFor(typeof(ushort))] // can't be auto-generated because ushort members may need this directly
         internal const int SizeOfUInt16InBits = sizeof(ushort) * 8;
 
         /// <summary>
@@ -152,6 +153,64 @@ namespace Bitwise
                 // byte
                 return (int)(value & (ushort)0b1111);
 #pragma warning restore 0162
+            }
+        }
+
+        /// <summary>
+        /// Returns the number of zero bits following the least-significant one-bit in the binary representation of <paramref name="value"/>
+        /// (as returned by <see cref="Bits.ToLongBinaryString(short)"/>). If <paramref name="value"/> is zero, returns the number of bits
+        /// in the <see cref="short"/> data type
+        /// </summary>
+        [MemberFor(typeof(ushort))]
+        public static int TrailingZeroBitCount(ushort value)
+        {
+            // based on http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/8u40-b25/java/lang/Integer.java#Integer.numberOfTrailingZeros%28int%29
+ 
+            if (value == (ushort)0) { return SizeOfUInt16InBits; }
+
+            unchecked
+            {
+                // the algorithm here is really very simple. We start by assuming that we have
+                // N-1 trailing zeros (N being special cased above). We then proceed to cut off
+                // half of the bits remaining with a left-shift. If that leaves a non-zero remainder,
+                // then we know that the lower half has a one and thus our assumption of the answer
+                // drops to at most N_lower_half - 1. We only "keep" the shift if this was the case, the
+                // result of which is that the bits needed to calculate the rest of the answer are now
+                // the top bits
+
+                var n = SizeOfUInt16InBits - 1;
+                ushort y;
+
+                // to simplify codegen for smaller integral types, we fork on sizeof().
+                // The compiler will remove these branches so that no additional inefficiency
+                // is incurred
+#pragma warning disable 0162
+                if (sizeof(ushort) > 4)
+                {
+                    y = (ushort)(value << 32);
+                    if (y != 0) { n -= 32; value = y; }
+                }
+
+                if (sizeof(ushort) > 2)
+                {
+                    y = (ushort)(value << 16);
+                    if (y != 0) { n -= 16; value = y; }
+                }
+
+                if (sizeof(ushort) > 1)
+                {
+                    y = (ushort)(value << 8);
+                    if (y != 0) { n -= 8; value = y; }
+                }
+#pragma warning restore 0162
+
+                y = (ushort)(value << 4);
+                if (y != 0) { n -= 4; value = y; }
+
+                y = (ushort)(value << 2);
+                if (y != 0) { n -= 2; value = y; }
+
+                return (int)(n - (int)((ushort)(value << 1) >> (SizeOfUInt16InBits - 1)));
             }
         }
 

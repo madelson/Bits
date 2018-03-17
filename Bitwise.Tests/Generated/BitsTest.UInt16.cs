@@ -188,24 +188,36 @@ namespace Bitwise.Tests
             Assert.AreEqual(Bits.SizeOfUInt16InBits - 2, Bits.BitCount(allBitsSet.ClearBit(Bits.SizeOfUInt16InBits / 2).ClearBit(0)));
 
             // fuzz testing
-            var random = new Random(12345);
-            var buffer = new byte[sizeof(ushort)];
-            ushort GetRandom()
+            for (var i = 0; i < FuzzTestIterations; ++i)
             {
-                random.NextBytes(buffer);
-                ushort value = 0;
-                for (var i = 0; i < buffer.Length; ++i)
-                {
-                    value = unchecked((ushort)((ushort)(value << 8) & (ushort)buffer[i]));
-                }
-                return value;
-            }
-
-            for (var i = 0; i < 2000; ++i)
-            {
-                var randomValue = GetRandom();
+                var randomValue = this.GetRandomUInt16();
                 var binaryString = Bits.ToShortBinaryString(randomValue);
                 Assert.AreEqual(binaryString.Count(ch => ch == '1'), Bits.BitCount(randomValue), binaryString);
+            }
+        }
+
+        /// <summary>
+        /// <see cref="Bits.TrailingZeroBitCount(ushort)"/>
+        /// </summary>
+        [Test]
+        public void TestTrailingZeroBitCountUInt16()
+        {
+            Assert.AreEqual(Bits.SizeOfUInt16InBits, Bits.TrailingZeroBitCount((ushort)0));
+            var allBitsSet = ushort.MinValue == default(ushort) ? ushort.MaxValue : unchecked((ushort)-1);
+            Assert.AreEqual(0, Bits.TrailingZeroBitCount(allBitsSet));
+
+            for (var i = 0; i < Bits.SizeOfUInt16InBits; ++i)
+            {
+                allBitsSet = allBitsSet.ClearBit(i);
+                Assert.AreEqual(i + 1, Bits.TrailingZeroBitCount(allBitsSet));
+            }
+
+            // fuzz testing
+            for (var i = 0; i < FuzzTestIterations; ++i)
+            {
+                var randomValue = this.GetRandomUInt16();
+                var binaryString = Bits.ToShortBinaryString(randomValue);
+                Assert.AreEqual(binaryString == "0" ? 8 * sizeof(ushort) : binaryString.Length - binaryString.TrimEnd('0').Length, Bits.TrailingZeroBitCount(randomValue));
             }
         }
 
@@ -237,6 +249,25 @@ namespace Bitwise.Tests
 
             var allBitsSet = ushort.MinValue == default(ushort) ? ushort.MaxValue : unchecked((ushort)-1);
             Assert.AreEqual(new string('1', count: Bits.SizeOfUInt16InBits), Bits.ToLongBinaryString(allBitsSet));
+        }
+
+        /// <summary>
+        /// Helper buffer for <see cref="GetRandomUInt16"/>
+        /// </summary>
+        private readonly byte[] _getRandomBufferUInt16 = new byte[sizeof(ushort)];
+
+        /// <summary>
+        /// Helper to generate random <see cref="ushort"/> values for fuzz testing
+        /// </summary>
+        private ushort GetRandomUInt16()
+        {
+            this._random.Value.NextBytes(this._getRandomBufferUInt16);
+            ushort value = 0;
+            for (var i = 0; i < sizeof(ushort); ++i)
+            {
+                value = unchecked((ushort)((ushort)(value << 8) & (ushort)this._getRandomBufferUInt16[i]));
+            }
+            return value;
         }
 
         

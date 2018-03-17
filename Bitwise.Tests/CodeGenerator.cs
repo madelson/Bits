@@ -103,14 +103,16 @@ namespace Bitwise.Tests
 
             var memberForMatches = Regex.Matches(memberContent, @"\[MemberFor\(typeof\((?<type>\w+)\)\)\]");
             if (memberForMatches.Count > 1) { throw new FormatException("Failed to parse memberfor of member: " + memberContent); }
-            
+            var memberFor = memberForMatches.Count == 0
+                ? typeof(long)
+                : FromAlias(memberForMatches[0].Groups["type"].Value);
+
             return new MemberParseResult
             {
                 Body = memberContent,
-                Name = nameMatches[0].Groups["name"].Value,
-                MemberFor = memberForMatches.Count == 0 
-                    ? typeof(long)
-                    : FromAlias(memberForMatches[0].Groups["type"].Value)
+                Name = nameMatches[0].Groups["name"].Value
+                    .Replace(memberFor.Name, string.Empty),
+                MemberFor = memberFor
             };
         }
 

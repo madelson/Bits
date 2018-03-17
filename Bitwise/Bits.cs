@@ -12,6 +12,12 @@ namespace Bitwise
         internal const int SizeOfInt64InBits = sizeof(long) * 8;
 
         /// <summary>
+        /// Size of the <see cref="ulong"/> type in bits
+        /// </summary>
+        [MemberFor(typeof(ulong))] // can't be auto-generated because ulong members may need this directly
+        internal const int SizeOfUInt64InBits = sizeof(ulong) * 8;
+
+        /// <summary>
         /// Determines whether <paramref name="value"/> has any of the same bits set as <paramref name="flags"/>
         /// </summary>
         public static bool HasAnyFlag(this long value, long flags) => (value & flags) != 0;
@@ -161,6 +167,71 @@ namespace Bitwise
         /// Returns the number of set bits in <paramref name="value"/>
         /// </summary>
         public static int BitCount(long value) => BitCount(ToUnsigned(value));
+
+        /// <summary>
+        /// Returns the number of zero bits following the least-significant one-bit in the binary representation of <paramref name="value"/>
+        /// (as returned by <see cref="Bits.ToLongBinaryString(long)"/>). If <paramref name="value"/> is zero, returns the number of bits
+        /// in the <see cref="long"/> data type
+        /// </summary>
+        [MemberFor(typeof(ulong))]
+        public static int TrailingZeroBitCount(ulong value)
+        {
+            // based on http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/8u40-b25/java/lang/Integer.java#Integer.numberOfTrailingZeros%28int%29
+ 
+            if (value == (ulong)0) { return SizeOfUInt64InBits; }
+
+            unchecked
+            {
+                // the algorithm here is really very simple. We start by assuming that we have
+                // N-1 trailing zeros (N being special cased above). We then proceed to cut off
+                // half of the bits remaining with a left-shift. If that leaves a non-zero remainder,
+                // then we know that the lower half has a one and thus our assumption of the answer
+                // drops to at most N_lower_half - 1. We only "keep" the shift if this was the case, the
+                // result of which is that the bits needed to calculate the rest of the answer are now
+                // the top bits
+
+                var n = SizeOfUInt64InBits - 1;
+                ulong y;
+
+                // to simplify codegen for smaller integral types, we fork on sizeof().
+                // The compiler will remove these branches so that no additional inefficiency
+                // is incurred
+#pragma warning disable 0162
+                if (sizeof(ulong) > 4)
+                {
+                    y = (ulong)(value << 32);
+                    if (y != 0) { n -= 32; value = y; }
+                }
+
+                if (sizeof(ulong) > 2)
+                {
+                    y = (ulong)(value << 16);
+                    if (y != 0) { n -= 16; value = y; }
+                }
+
+                if (sizeof(ulong) > 1)
+                {
+                    y = (ulong)(value << 8);
+                    if (y != 0) { n -= 8; value = y; }
+                }
+#pragma warning restore 0162
+
+                y = (ulong)(value << 4);
+                if (y != 0) { n -= 4; value = y; }
+
+                y = (ulong)(value << 2);
+                if (y != 0) { n -= 2; value = y; }
+
+                return (int)(n - (int)((ulong)(value << 1) >> (SizeOfUInt64InBits - 1)));
+            }
+        }
+
+        /// <summary>
+        /// Returns the number of zero bits following the least-significant one-bit in the binary representation of <paramref name="value"/>
+        /// (as returned by <see cref="Bits.ToLongBinaryString(long)"/>). If <paramref name="value"/> is zero, returns the number of bits
+        /// in the <see cref="long"/> data type
+        /// </summary>
+        public static int TrailingZeroBitCount(long value) => TrailingZeroBitCount(ToUnsigned(value));
 
         /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITHOUT leading zeros

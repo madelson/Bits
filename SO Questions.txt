@@ -1,0 +1,1 @@
+* https://stackoverflow.com/questions/6790694/convert-tostring-to-binary-format-not-working-as-expected
