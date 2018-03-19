@@ -16,6 +16,20 @@ namespace Bitwise
         internal const int SizeOfByteInBits = sizeof(byte) * 8;
 
         /// <summary>
+        /// The native shift operator on <see cref="byte"/> converts to <see cref="int"/> before shifting. This method performs
+        /// a shift purely within the confines of the <see cref="byte"/> data type
+        /// </summary>
+        [MemberFor(typeof(byte))]
+        public static byte ShiftLeft(byte value, int positions) => unchecked((byte)(value << (positions & ((sizeof(byte) * 8) - 1))));
+
+        /// <summary>
+        /// The native shift operator on <see cref="byte"/> converts to <see cref="int"/> before shifting. This method performs
+        /// a shift purely within the confines of the <see cref="byte"/> data type
+        /// </summary>
+        [MemberFor(typeof(byte))]
+        public static byte ShiftRight(byte value, int positions) => unchecked((byte)(value >> (positions & ((sizeof(byte) * 8) - 1))));
+        
+        /// <summary>
         /// Determines whether <paramref name="value"/> has any of the same bits set as <paramref name="flags"/>
         /// </summary>
         public static bool HasAnyFlag(this byte value, byte flags) => (value & flags) != 0;
@@ -253,6 +267,20 @@ namespace Bitwise
                 return count;
             }
         }
+
+        /// <summary>
+        /// Returns <paramref name="value"/> "rotated" left by <paramref name="positions"/> bit positions. This is similar
+        /// to shifting left, except that bits shifted off the high end reenter on the low end
+        /// </summary>
+        [MemberFor(typeof(byte))]
+        public static byte RotateLeft(byte value, int positions) => unchecked((byte)(ShiftLeft(value, positions) | ShiftRight(value, -positions)));
+
+        /// <summary>
+        /// Returns <paramref name="value"/> "rotated" right by <paramref name="positions"/> bit positions. This is similar
+        /// to shifting right, except that bits shifted off the low end reenter on the high end
+        /// </summary>
+        [MemberFor(typeof(byte))]
+        public static byte RotateRight(byte value, int positions) => unchecked((byte)(ShiftRight(value, positions) | ShiftLeft(value, -positions)));
 
         /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITHOUT leading zeros

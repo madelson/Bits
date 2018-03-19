@@ -15,6 +15,20 @@ namespace Bitwise
         internal const int SizeOfSByteInBits = sizeof(sbyte) * 8;
 
         /// <summary>
+        /// The native shift operator on <see cref="sbyte"/> converts to <see cref="int"/> before shifting. This method performs
+        /// a shift purely within the confines of the <see cref="sbyte"/> data type
+        /// </summary>
+        [MemberFor(typeof(sbyte))]
+        public static sbyte ShiftLeft(sbyte value, int positions) => unchecked((sbyte)(value << (positions & ((sizeof(sbyte) * 8) - 1))));
+
+        /// <summary>
+        /// The native shift operator on <see cref="sbyte"/> converts to <see cref="int"/> before shifting. This method performs
+        /// a shift purely within the confines of the <see cref="sbyte"/> data type
+        /// </summary>
+        [MemberFor(typeof(sbyte))]
+        public static sbyte ShiftRight(sbyte value, int positions) => unchecked((sbyte)(value >> (positions & ((sizeof(sbyte) * 8) - 1))));
+
+        /// <summary>
         /// Determines whether <paramref name="value"/> has any of the same bits set as <paramref name="flags"/>
         /// </summary>
         public static bool HasAnyFlag(this sbyte value, sbyte flags) => (value & flags) != 0;
@@ -97,6 +111,18 @@ namespace Bitwise
         /// in the <see cref="sbyte"/> data type
         /// </summary>
         public static int LeadingZeroBitCount(sbyte value) => LeadingZeroBitCount(ToUnsigned(value));
+
+        /// <summary>
+        /// Returns <paramref name="value"/> "rotated" left by <paramref name="positions"/> bit positions. This is similar
+        /// to shifting left, except that bits shifted off the high end reenter on the low end
+        /// </summary>
+        public static sbyte RotateLeft(sbyte value, int positions) => unchecked((sbyte)RotateLeft(ToUnsigned(value), positions));
+
+        /// <summary>
+        /// Returns <paramref name="value"/> "rotated" right by <paramref name="positions"/> bit positions. This is similar
+        /// to shifting right, except that bits shifted off the low end reenter on the high end
+        /// </summary>
+        public static sbyte RotateRight(sbyte value, int positions) => unchecked((sbyte)RotateRight(ToUnsigned(value), positions));
 
         /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITH ALL leading zeros

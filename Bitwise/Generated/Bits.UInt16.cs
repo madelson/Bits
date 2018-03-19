@@ -255,6 +255,20 @@ namespace Bitwise
         }
 
         /// <summary>
+        /// Returns <paramref name="value"/> "rotated" left by <paramref name="positions"/> bit positions. This is similar
+        /// to shifting left, except that bits shifted off the high end reenter on the low end
+        /// </summary>
+        [MemberFor(typeof(ushort))]
+        public static ushort RotateLeft(ushort value, int positions) => unchecked((ushort)(ShiftLeft(value, positions) | ShiftRight(value, -positions)));
+
+        /// <summary>
+        /// Returns <paramref name="value"/> "rotated" right by <paramref name="positions"/> bit positions. This is similar
+        /// to shifting right, except that bits shifted off the low end reenter on the high end
+        /// </summary>
+        [MemberFor(typeof(ushort))]
+        public static ushort RotateRight(ushort value, int positions) => unchecked((ushort)(ShiftRight(value, positions) | ShiftLeft(value, -positions)));
+
+        /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITHOUT leading zeros
         /// </summary>
         [MemberFor(typeof(ushort))]

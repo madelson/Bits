@@ -15,6 +15,20 @@ namespace Bitwise
         internal const int SizeOfInt32InBits = sizeof(int) * 8;
 
         /// <summary>
+        /// The native shift operator on <see cref="int"/> converts to <see cref="int"/> before shifting. This method performs
+        /// a shift purely within the confines of the <see cref="int"/> data type
+        /// </summary>
+        [MemberFor(typeof(int))]
+        public static int ShiftLeft(int value, int positions) => unchecked((int)(value << (positions & ((sizeof(int) * 8) - 1))));
+
+        /// <summary>
+        /// The native shift operator on <see cref="int"/> converts to <see cref="int"/> before shifting. This method performs
+        /// a shift purely within the confines of the <see cref="int"/> data type
+        /// </summary>
+        [MemberFor(typeof(int))]
+        public static int ShiftRight(int value, int positions) => unchecked((int)(value >> (positions & ((sizeof(int) * 8) - 1))));
+
+        /// <summary>
         /// Determines whether <paramref name="value"/> has any of the same bits set as <paramref name="flags"/>
         /// </summary>
         public static bool HasAnyFlag(this int value, int flags) => (value & flags) != 0;
@@ -99,9 +113,22 @@ namespace Bitwise
         public static int LeadingZeroBitCount(int value) => LeadingZeroBitCount(ToUnsigned(value));
 
         /// <summary>
+        /// Returns <paramref name="value"/> "rotated" left by <paramref name="positions"/> bit positions. This is similar
+        /// to shifting left, except that bits shifted off the high end reenter on the low end
+        /// </summary>
+        public static int RotateLeft(int value, int positions) => unchecked((int)RotateLeft(ToUnsigned(value), positions));
+
+        /// <summary>
+        /// Returns <paramref name="value"/> "rotated" right by <paramref name="positions"/> bit positions. This is similar
+        /// to shifting right, except that bits shifted off the low end reenter on the high end
+        /// </summary>
+        public static int RotateRight(int value, int positions) => unchecked((int)RotateRight(ToUnsigned(value), positions));
+
+        /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITHOUT leading zeros
         /// </summary>
-        public static string ToShortBinaryString(int value) => Convert.ToString(value, toBase: 2);
+        [MemberFor(typeof(int))] // Convert.ToString(#, base) is defined for byte rather than for int
+        public static string ToShortBinaryString(int value) => Convert.ToString(ToUnsigned(value), toBase: 2);
 
         /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITH ALL leading zeros

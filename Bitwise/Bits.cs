@@ -18,6 +18,56 @@ namespace Bitwise
         internal const int SizeOfUInt64InBits = sizeof(ulong) * 8;
 
         /// <summary>
+        /// The presence of this method simplifies codegen when using <see cref="ShiftLeft(short, int)"/> and similar
+        /// </summary>
+        internal static long ShiftLeft(long value, int positions) => value << positions;
+
+        /// <summary>
+        /// The presence of this method simplifies codegen when using <see cref="ShiftLeft(short, int)"/> and similar
+        /// </summary>
+        [MemberFor(typeof(ulong))]
+        internal static ulong ShiftLeft(ulong value, int positions) => value << positions;
+
+        /// <summary>
+        /// The native shift operator on <see cref="short"/> converts to <see cref="int"/> before shifting. This method performs
+        /// a shift purely within the confines of the <see cref="short"/> data type
+        /// </summary>
+        [MemberFor(typeof(short))]
+        public static short ShiftLeft(short value, int positions) => unchecked((short)(value << (positions & ((sizeof(short) * 8) - 1))));
+
+        /// <summary>
+        /// The native shift operator on <see cref="ushort"/> converts to <see cref="int"/> before shifting. This method performs
+        /// a shift purely within the confines of the <see cref="ushort"/> data type
+        /// </summary>
+        [MemberFor(typeof(ushort))]
+        public static ushort ShiftLeft(ushort value, int positions) => unchecked((ushort)(value << (positions & ((sizeof(ushort) * 8) - 1))));
+
+        /// <summary>
+        /// The presence of this method simplifies codegen when using <see cref="ShiftRight(short, int)"/> and similar
+        /// </summary>
+        internal static long ShiftRight(long value, int positions) => value >> positions;
+
+        /// <summary>
+        /// The presence of this method simplifies codegen when using <see cref="ShiftRight(short, int)"/> and similar
+        /// </summary>
+        [MemberFor(typeof(ulong))]
+        internal static ulong ShiftRight(ulong value, int positions) => value >> positions;
+
+        /// <summary>
+        /// The native shift operator on <see cref="short"/> converts to <see cref="int"/> before shifting. This method performs
+        /// a shift purely within the confines of the <see cref="short"/> data type
+        /// </summary>
+        [MemberFor(typeof(short))]
+        public static short ShiftRight(short value, int positions) => unchecked((short)(value >> (positions & ((sizeof(short) * 8) - 1))));
+
+        /// <summary>
+        /// The native shift operator on <see cref="ushort"/> converts to <see cref="int"/> before shifting. This method performs
+        /// a shift purely within the confines of the <see cref="ushort"/> data type
+        /// </summary>
+        [MemberFor(typeof(ushort))]
+        public static ushort ShiftRight(ushort value, int positions) => unchecked((ushort)(value >> (positions & ((sizeof(ushort) * 8) - 1))));
+        
+        /// <summary>
         /// Determines whether <paramref name="value"/> has any of the same bits set as <paramref name="flags"/>
         /// </summary>
         public static bool HasAnyFlag(this long value, long flags) => (value & flags) != 0;
@@ -279,6 +329,32 @@ namespace Bitwise
         /// in the <see cref="long"/> data type
         /// </summary>
         public static int LeadingZeroBitCount(long value) => LeadingZeroBitCount(ToUnsigned(value));
+
+        /// <summary>
+        /// Returns <paramref name="value"/> "rotated" left by <paramref name="positions"/> bit positions. This is similar
+        /// to shifting left, except that bits shifted off the high end reenter on the low end
+        /// </summary>
+        [MemberFor(typeof(ulong))]
+        public static ulong RotateLeft(ulong value, int positions) => unchecked((ulong)(ShiftLeft(value, positions) | ShiftRight(value, -positions)));
+
+        /// <summary>
+        /// Returns <paramref name="value"/> "rotated" left by <paramref name="positions"/> bit positions. This is similar
+        /// to shifting left, except that bits shifted off the high end reenter on the low end
+        /// </summary>
+        public static long RotateLeft(long value, int positions) => unchecked((long)RotateLeft(ToUnsigned(value), positions));
+
+        /// <summary>
+        /// Returns <paramref name="value"/> "rotated" right by <paramref name="positions"/> bit positions. This is similar
+        /// to shifting right, except that bits shifted off the low end reenter on the high end
+        /// </summary>
+        [MemberFor(typeof(ulong))]
+        public static ulong RotateRight(ulong value, int positions) => unchecked((ulong)(ShiftRight(value, positions) | ShiftLeft(value, -positions)));
+
+        /// <summary>
+        /// Returns <paramref name="value"/> "rotated" right by <paramref name="positions"/> bit positions. This is similar
+        /// to shifting right, except that bits shifted off the low end reenter on the high end
+        /// </summary>
+        public static long RotateRight(long value, int positions) => unchecked((long)RotateRight(ToUnsigned(value), positions));
 
         /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITHOUT leading zeros

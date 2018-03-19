@@ -99,9 +99,22 @@ namespace Bitwise
         public static int LeadingZeroBitCount(short value) => LeadingZeroBitCount(ToUnsigned(value));
 
         /// <summary>
+        /// Returns <paramref name="value"/> "rotated" left by <paramref name="positions"/> bit positions. This is similar
+        /// to shifting left, except that bits shifted off the high end reenter on the low end
+        /// </summary>
+        public static short RotateLeft(short value, int positions) => unchecked((short)RotateLeft(ToUnsigned(value), positions));
+
+        /// <summary>
+        /// Returns <paramref name="value"/> "rotated" right by <paramref name="positions"/> bit positions. This is similar
+        /// to shifting right, except that bits shifted off the low end reenter on the high end
+        /// </summary>
+        public static short RotateRight(short value, int positions) => unchecked((short)RotateRight(ToUnsigned(value), positions));
+
+        /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITHOUT leading zeros
         /// </summary>
-        public static string ToShortBinaryString(short value) => Convert.ToString(value, toBase: 2);
+        [MemberFor(typeof(short))] // Convert.ToString(#, base) is defined for byte rather than for short
+        public static string ToShortBinaryString(short value) => Convert.ToString(ToUnsigned(value), toBase: 2);
 
         /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITH ALL leading zeros

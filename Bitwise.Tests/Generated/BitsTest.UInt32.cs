@@ -13,6 +13,62 @@ namespace Bitwise.Tests
     public partial class BitsTest
     {
         /// <summary>
+        /// <see cref="Bits.ShiftLeft(uint, int)"/>
+        /// </summary>
+        [Test]
+        public void TestShiftLeftUInt32() => this.TestShiftUInt32Helper(isLeft: true);
+
+        /// <summary>
+        /// <see cref="Bits.ShiftRight(uint, int)"/>
+        /// </summary>
+        [Test]
+        public void TestShiftRightUInt32() => this.TestShiftUInt32Helper(isLeft: false);
+
+        /// <summary>
+        /// Helper for <see cref="TestShiftLeftUInt32"/> and <see cref="TestShiftRightUInt32"/>
+        /// </summary>
+        private void TestShiftUInt32Helper(bool isLeft)
+        {
+            var allBitsSet = uint.MinValue == default(uint) ? uint.MaxValue : unchecked((uint)-1);
+
+            Check(10, int.MinValue);
+            Check(10, int.MaxValue);
+
+            for (var i = -Bits.SizeOfUInt32InBits; i < Bits.SizeOfUInt32InBits; ++i)
+            {
+                Check(0, i);
+                Check(1, i);
+                Check(allBitsSet, i);
+            }
+
+            // fuzz testing
+            for (var i = 0; i < FuzzTestIterations; ++i)
+            {
+                var randomValue = this.GetRandomUInt32();
+                var randomPositions = this._random.Value.Next(int.MinValue, int.MaxValue);
+                Check(randomValue, randomPositions);
+            }
+
+            void Check(uint value, int positions)
+            {
+                var valueBits = Bits.ToLongBinaryString(value);
+                var expectedBits = ShiftString(valueBits, positions);
+                var actual = isLeft ? Bits.ShiftLeft(value, positions) : Bits.ShiftRight(value, positions);
+                var actualBits = Bits.ToLongBinaryString(actual);
+                Assert.AreEqual(expectedBits, actualBits, $"Shift{(isLeft ? "Left" : "Right")}({value}, {positions})");
+            }
+
+            string ShiftString(string bits, int positions)
+            {
+                var actualPositions = positions % bits.Length;
+                if (actualPositions < 0) { actualPositions += bits.Length; }
+                return isLeft 
+                    ? bits.Substring(actualPositions, bits.Length - actualPositions) + new string('0', actualPositions)
+                    : new string(CodeGenerator.IsUnsigned(typeof(uint)) ? '0' : bits[0], actualPositions) + bits.Substring(0, bits.Length - actualPositions);
+            }
+        }
+
+        /// <summary>
         /// <see cref="Bits.HasAnyFlag(uint, uint)"/>
         /// </summary>
         [Test]
@@ -243,6 +299,62 @@ namespace Bitwise.Tests
                 var randomValue = this.GetRandomUInt32();
                 var binaryString = Bits.ToShortBinaryString(randomValue);
                 Assert.AreEqual(binaryString == "0" ? Bits.SizeOfUInt32InBits : Bits.SizeOfUInt32InBits - binaryString.Length, Bits.LeadingZeroBitCount(randomValue));
+            }
+        }
+
+        /// <summary>
+        /// <see cref="Bits.RotateLeft(uint, int)"/>
+        /// </summary>
+        [Test]
+        public void TestRotateLeftUInt32() => this.TestRotateUInt32Helper(isLeft: true);
+
+        /// <summary>
+        /// <see cref="Bits.RotateRight(uint, int)"/>
+        /// </summary>
+        [Test]
+        public void TestRotateRightUInt32() => this.TestRotateUInt32Helper(isLeft: false);
+
+        /// <summary>
+        /// Helper for <see cref="TestRotateLeftUInt32"/> and <see cref="TestRotateRightUInt32"/>
+        /// </summary>
+        private void TestRotateUInt32Helper(bool isLeft)
+        {
+            var allBitsSet = uint.MinValue == default(uint) ? uint.MaxValue : unchecked((uint)-1);
+
+            Check(10, int.MinValue);
+            Check(10, int.MaxValue);
+
+            for (var i = -Bits.SizeOfUInt32InBits; i < Bits.SizeOfUInt32InBits; ++i)
+            {
+                Check(0, i);
+                Check(1, i);
+                Check(allBitsSet, i);
+            }
+
+            // fuzz testing
+            for (var i = 0; i < FuzzTestIterations; ++i)
+            {
+                var randomValue = this.GetRandomUInt32();
+                var randomPositions = this._random.Value.Next(int.MinValue, int.MaxValue);
+                Check(randomValue, randomPositions);
+            }
+
+            void Check(uint value, int positions)
+            {
+                var valueBits = Bits.ToLongBinaryString(value);
+                var expectedBits = RotateString(valueBits, positions);
+                var actual = isLeft ? Bits.RotateLeft(value, positions) : Bits.RotateRight(value, positions);
+                var actualBits = Bits.ToLongBinaryString(actual);
+                Assert.AreEqual(expectedBits, actualBits, $"Rotate{(isLeft ? "Left" : "Right")}({value}, {positions})");
+            }
+
+            string RotateString(string bits, int positions)
+            {
+                var actualPositions = positions % bits.Length;
+                if (actualPositions < 0) { actualPositions += Bits.SizeOfUInt32InBits; }
+                return isLeft
+                    ? bits.Substring(actualPositions) + bits.Substring(0, actualPositions)
+                    : bits.Substring(bits.Length - actualPositions) + bits.Substring(0, bits.Length - actualPositions);
             }
         }
 

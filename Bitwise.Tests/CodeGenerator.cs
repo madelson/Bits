@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -49,8 +50,8 @@ namespace Bitwise.Tests
                     {
                         if (!memberGroup.Any(m => m.MemberFor == type))
                         {
-                            var referenceMember = memberGroup.OrderByDescending(m => IsUnsigned(type) && m.MemberFor == typeof(ulong))
-                                .ThenByDescending(m => m.MemberFor == typeof(long))
+                            var referenceMember = memberGroup.OrderByDescending(m => IsUnsigned(type) == IsUnsigned(m.MemberFor))
+                                .ThenBy(m => Marshal.SizeOf(m.MemberFor) >= Marshal.SizeOf(type) ? Marshal.SizeOf(m.MemberFor) - Marshal.SizeOf(type) : -Marshal.SizeOf(m.MemberFor))
                                 .First();
                             var typeMember = Regex.Replace(
                                 referenceMember.Body,
@@ -116,7 +117,7 @@ namespace Bitwise.Tests
             };
         }
 
-        private static bool IsUnsigned(Type type) => GetSignedVariant(type) != type;
+        internal static bool IsUnsigned(Type type) => GetSignedVariant(type) != type;
 
         private static Type GetSignedVariant(Type type) => type.Name.StartsWith("U") ? Type.GetType($"{type.Namespace}.{type.Name.Substring(1)}", throwOnError: true)
             : type == typeof(byte) ? typeof(sbyte)
