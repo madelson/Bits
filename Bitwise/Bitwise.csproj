@@ -2,6 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.1</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>Bits</PackageId>
+    <Version>0.0.0</Version>
+    <Authors>Michael Adelson</Authors>
+    <Company />
+    <Product />
+    <Description>Fast bitwise operations for .NET</Description>
+    <Copyright>Copyright © 2018 Michael Adelson</Copyright>
+    <PackageReleaseNotes>Pre-release</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
