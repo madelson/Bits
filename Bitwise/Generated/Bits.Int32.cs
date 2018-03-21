@@ -28,6 +28,22 @@ namespace Bitwise
         [MemberFor(typeof(int))]
         public static int ShiftRight(int value, int positions) => unchecked((int)(value >> (positions & ((sizeof(int) * 8) - 1))));
 
+        /// <summary>As the native operator, but returns <see cref="int"/> instead of <see cref="int"/></summary>
+        [MemberFor(typeof(int))]
+        public static int And(int a, int b) => unchecked((int)(a & b));
+
+        /// <summary>As the native operator, but returns <see cref="int"/> instead of <see cref="int"/></summary>
+        [MemberFor(typeof(int))]
+        public static int Or(int a, int b) => unchecked((int)(a | b));
+
+        /// <summary>As the native operator, but returns <see cref="int"/> instead of <see cref="int"/></summary>
+        [MemberFor(typeof(int))]
+        public static int Xor(int a, int b) => unchecked((int)(a ^ b));
+
+        /// <summary>As the native operator, but returns <see cref="int"/> instead of <see cref="int"/></summary>
+        [MemberFor(typeof(int))]
+        public static int Not(int value) => unchecked((int)~value);
+
         /// <summary>
         /// Determines whether <paramref name="value"/> has any of the same bits set as <paramref name="flags"/>
         /// </summary>
@@ -123,6 +139,11 @@ namespace Bitwise
         /// to shifting right, except that bits shifted off the low end reenter on the high end
         /// </summary>
         public static int RotateRight(int value, int positions) => unchecked((int)RotateRight(ToUnsigned(value), positions));
+
+        /// <summary>
+        /// Returns <paramref name="value"/> with the bits reversed
+        /// </summary>
+        public static int Reverse(int value) => unchecked((int)Reverse(ToUnsigned(value)));
 
         /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITHOUT leading zeros

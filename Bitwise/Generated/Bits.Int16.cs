@@ -111,6 +111,11 @@ namespace Bitwise
         public static short RotateRight(short value, int positions) => unchecked((short)RotateRight(ToUnsigned(value), positions));
 
         /// <summary>
+        /// Returns <paramref name="value"/> with the bits reversed
+        /// </summary>
+        public static short Reverse(short value) => unchecked((short)Reverse(ToUnsigned(value)));
+
+        /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITHOUT leading zeros
         /// </summary>
         [MemberFor(typeof(short))] // Convert.ToString(#, base) is defined for byte rather than for short

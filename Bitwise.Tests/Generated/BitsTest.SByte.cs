@@ -69,6 +69,65 @@ namespace Bitwise.Tests
         }
 
         /// <summary>
+        /// <see cref="Bits.And(sbyte, sbyte)"/>
+        /// </summary>
+        [Test]
+        public void TestAndSByte()
+        {
+            // fuzz testing
+            for (var i = 0; i < FuzzTestIterations; ++i)
+            {
+                var randomValue1 = this.GetRandomSByte();
+                var randomValue2 = this.GetRandomSByte();
+                Assert.AreEqual((sbyte)(randomValue1 & randomValue2), Bits.And(randomValue1, randomValue2));
+            }
+        }
+
+        /// <summary>
+        /// <see cref="Bits.Or(sbyte, sbyte)"/>
+        /// </summary>
+        [Test]
+        public void TestOrSByte()
+        {
+            // fuzz testing
+            for (var i = 0; i < FuzzTestIterations; ++i)
+            {
+                var randomValue1 = this.GetRandomSByte();
+                var randomValue2 = this.GetRandomSByte();
+                Assert.AreEqual((sbyte)(randomValue1 | randomValue2), Bits.Or(randomValue1, randomValue2));
+            }
+        }
+
+        /// <summary>
+        /// <see cref="Bits.Not(sbyte)"/>
+        /// </summary>
+        [Test]
+        public void TestNotSByte()
+        {
+            // fuzz testing
+            for (var i = 0; i < FuzzTestIterations; ++i)
+            {
+                var randomValue = this.GetRandomSByte();
+                Assert.AreEqual((sbyte)(~randomValue), Bits.Not(randomValue));
+            }
+        }
+
+        /// <summary>
+        /// <see cref="Bits.Xor(sbyte, sbyte)"/>
+        /// </summary>
+        [Test]
+        public void TestXorSByte()
+        {
+            // fuzz testing
+            for (var i = 0; i < FuzzTestIterations; ++i)
+            {
+                var randomValue1 = this.GetRandomSByte();
+                var randomValue2 = this.GetRandomSByte();
+                Assert.AreEqual((sbyte)(randomValue1 ^ randomValue2), Bits.Xor(randomValue1, randomValue2));
+            }
+        }
+
+        /// <summary>
         /// <see cref="Bits.HasAnyFlag(sbyte, sbyte)"/>
         /// </summary>
         [Test]
@@ -355,6 +414,46 @@ namespace Bitwise.Tests
                 return isLeft
                     ? bits.Substring(actualPositions) + bits.Substring(0, actualPositions)
                     : bits.Substring(bits.Length - actualPositions) + bits.Substring(0, bits.Length - actualPositions);
+            }
+        }
+
+        /// <summary>
+        /// <see cref="Bits.Reverse(sbyte)"/>
+        /// </summary>
+        [Test]
+        public void TestReverseSByte()
+        {
+            Check(default(sbyte));
+            var allBitsSet = sbyte.MinValue == default(sbyte) ? sbyte.MaxValue : unchecked((sbyte)-1);
+            Check(allBitsSet);
+            Check(sbyte.MinValue);
+            Check(sbyte.MaxValue);
+
+            for (var i = 0; i < Bits.SizeOfSByteInBits; ++i)
+            {
+                Check(Bits.ShiftLeft((sbyte)1, i));
+            }
+
+            // fuzz testing
+            for (var i = 0; i < FuzzTestIterations; ++i)
+            {
+                Check(this.GetRandomSByte());
+            }
+
+            void Check(sbyte value)
+            {
+                var valueBits = Bits.ToLongBinaryString(value);
+                var expectedBits = ReverseString(valueBits);
+                var actual = Bits.Reverse(value);
+                var actualBits = Bits.ToLongBinaryString(actual);
+                Assert.AreEqual(expectedBits, actualBits, $"Reverse({value} /* {valueBits} */)");
+            }
+
+            string ReverseString(string bits)
+            {
+                var array = bits.ToCharArray();
+                Array.Reverse(array);
+                return new string(array);
             }
         }
 

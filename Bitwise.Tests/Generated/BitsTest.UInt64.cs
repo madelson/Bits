@@ -69,6 +69,65 @@ namespace Bitwise.Tests
         }
 
         /// <summary>
+        /// <see cref="Bits.And(ulong, ulong)"/>
+        /// </summary>
+        [Test]
+        public void TestAndUInt64()
+        {
+            // fuzz testing
+            for (var i = 0; i < FuzzTestIterations; ++i)
+            {
+                var randomValue1 = this.GetRandomUInt64();
+                var randomValue2 = this.GetRandomUInt64();
+                Assert.AreEqual((ulong)(randomValue1 & randomValue2), Bits.And(randomValue1, randomValue2));
+            }
+        }
+
+        /// <summary>
+        /// <see cref="Bits.Or(ulong, ulong)"/>
+        /// </summary>
+        [Test]
+        public void TestOrUInt64()
+        {
+            // fuzz testing
+            for (var i = 0; i < FuzzTestIterations; ++i)
+            {
+                var randomValue1 = this.GetRandomUInt64();
+                var randomValue2 = this.GetRandomUInt64();
+                Assert.AreEqual((ulong)(randomValue1 | randomValue2), Bits.Or(randomValue1, randomValue2));
+            }
+        }
+
+        /// <summary>
+        /// <see cref="Bits.Not(ulong)"/>
+        /// </summary>
+        [Test]
+        public void TestNotUInt64()
+        {
+            // fuzz testing
+            for (var i = 0; i < FuzzTestIterations; ++i)
+            {
+                var randomValue = this.GetRandomUInt64();
+                Assert.AreEqual((ulong)(~randomValue), Bits.Not(randomValue));
+            }
+        }
+
+        /// <summary>
+        /// <see cref="Bits.Xor(ulong, ulong)"/>
+        /// </summary>
+        [Test]
+        public void TestXorUInt64()
+        {
+            // fuzz testing
+            for (var i = 0; i < FuzzTestIterations; ++i)
+            {
+                var randomValue1 = this.GetRandomUInt64();
+                var randomValue2 = this.GetRandomUInt64();
+                Assert.AreEqual((ulong)(randomValue1 ^ randomValue2), Bits.Xor(randomValue1, randomValue2));
+            }
+        }
+
+        /// <summary>
         /// <see cref="Bits.HasAnyFlag(ulong, ulong)"/>
         /// </summary>
         [Test]
@@ -355,6 +414,46 @@ namespace Bitwise.Tests
                 return isLeft
                     ? bits.Substring(actualPositions) + bits.Substring(0, actualPositions)
                     : bits.Substring(bits.Length - actualPositions) + bits.Substring(0, bits.Length - actualPositions);
+            }
+        }
+
+        /// <summary>
+        /// <see cref="Bits.Reverse(ulong)"/>
+        /// </summary>
+        [Test]
+        public void TestReverseUInt64()
+        {
+            Check(default(ulong));
+            var allBitsSet = ulong.MinValue == default(ulong) ? ulong.MaxValue : unchecked((ulong)-1);
+            Check(allBitsSet);
+            Check(ulong.MinValue);
+            Check(ulong.MaxValue);
+
+            for (var i = 0; i < Bits.SizeOfUInt64InBits; ++i)
+            {
+                Check(Bits.ShiftLeft((ulong)1, i));
+            }
+
+            // fuzz testing
+            for (var i = 0; i < FuzzTestIterations; ++i)
+            {
+                Check(this.GetRandomUInt64());
+            }
+
+            void Check(ulong value)
+            {
+                var valueBits = Bits.ToLongBinaryString(value);
+                var expectedBits = ReverseString(valueBits);
+                var actual = Bits.Reverse(value);
+                var actualBits = Bits.ToLongBinaryString(actual);
+                Assert.AreEqual(expectedBits, actualBits, $"Reverse({value} /* {valueBits} */)");
+            }
+
+            string ReverseString(string bits)
+            {
+                var array = bits.ToCharArray();
+                Array.Reverse(array);
+                return new string(array);
             }
         }
 

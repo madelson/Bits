@@ -28,6 +28,22 @@ namespace Bitwise
         [MemberFor(typeof(sbyte))]
         public static sbyte ShiftRight(sbyte value, int positions) => unchecked((sbyte)(value >> (positions & ((sizeof(sbyte) * 8) - 1))));
 
+        /// <summary>As the native operator, but returns <see cref="sbyte"/> instead of <see cref="int"/></summary>
+        [MemberFor(typeof(sbyte))]
+        public static sbyte And(sbyte a, sbyte b) => unchecked((sbyte)(a & b));
+
+        /// <summary>As the native operator, but returns <see cref="sbyte"/> instead of <see cref="int"/></summary>
+        [MemberFor(typeof(sbyte))]
+        public static sbyte Or(sbyte a, sbyte b) => unchecked((sbyte)(a | b));
+
+        /// <summary>As the native operator, but returns <see cref="sbyte"/> instead of <see cref="int"/></summary>
+        [MemberFor(typeof(sbyte))]
+        public static sbyte Xor(sbyte a, sbyte b) => unchecked((sbyte)(a ^ b));
+
+        /// <summary>As the native operator, but returns <see cref="sbyte"/> instead of <see cref="int"/></summary>
+        [MemberFor(typeof(sbyte))]
+        public static sbyte Not(sbyte value) => unchecked((sbyte)~value);
+
         /// <summary>
         /// Determines whether <paramref name="value"/> has any of the same bits set as <paramref name="flags"/>
         /// </summary>
@@ -123,6 +139,11 @@ namespace Bitwise
         /// to shifting right, except that bits shifted off the low end reenter on the high end
         /// </summary>
         public static sbyte RotateRight(sbyte value, int positions) => unchecked((sbyte)RotateRight(ToUnsigned(value), positions));
+
+        /// <summary>
+        /// Returns <paramref name="value"/> with the bits reversed
+        /// </summary>
+        public static sbyte Reverse(sbyte value) => unchecked((sbyte)Reverse(ToUnsigned(value)));
 
         /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITH ALL leading zeros

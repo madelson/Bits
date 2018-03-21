@@ -66,6 +66,65 @@ namespace Bitwise.Tests
         }
 
         /// <summary>
+        /// <see cref="Bits.And(long, long)"/>
+        /// </summary>
+        [Test]
+        public void TestAndInt64()
+        {
+            // fuzz testing
+            for (var i = 0; i < FuzzTestIterations; ++i)
+            {
+                var randomValue1 = this.GetRandomInt64();
+                var randomValue2 = this.GetRandomInt64();
+                Assert.AreEqual((long)(randomValue1 & randomValue2), Bits.And(randomValue1, randomValue2));
+            }
+        }
+
+        /// <summary>
+        /// <see cref="Bits.Or(long, long)"/>
+        /// </summary>
+        [Test]
+        public void TestOrInt64()
+        {
+            // fuzz testing
+            for (var i = 0; i < FuzzTestIterations; ++i)
+            {
+                var randomValue1 = this.GetRandomInt64();
+                var randomValue2 = this.GetRandomInt64();
+                Assert.AreEqual((long)(randomValue1 | randomValue2), Bits.Or(randomValue1, randomValue2));
+            }
+        }
+
+        /// <summary>
+        /// <see cref="Bits.Not(long)"/>
+        /// </summary>
+        [Test]
+        public void TestNotInt64()
+        {
+            // fuzz testing
+            for (var i = 0; i < FuzzTestIterations; ++i)
+            {
+                var randomValue = this.GetRandomInt64();
+                Assert.AreEqual((long)(~randomValue), Bits.Not(randomValue));
+            }
+        }
+
+        /// <summary>
+        /// <see cref="Bits.Xor(long, long)"/>
+        /// </summary>
+        [Test]
+        public void TestXorInt64()
+        {
+            // fuzz testing
+            for (var i = 0; i < FuzzTestIterations; ++i)
+            {
+                var randomValue1 = this.GetRandomInt64();
+                var randomValue2 = this.GetRandomInt64();
+                Assert.AreEqual((long)(randomValue1 ^ randomValue2), Bits.Xor(randomValue1, randomValue2));
+            }
+        }
+
+        /// <summary>
         /// <see cref="Bits.HasAnyFlag(long, long)"/>
         /// </summary>
         [Test]
@@ -352,6 +411,46 @@ namespace Bitwise.Tests
                 return isLeft
                     ? bits.Substring(actualPositions) + bits.Substring(0, actualPositions)
                     : bits.Substring(bits.Length - actualPositions) + bits.Substring(0, bits.Length - actualPositions);
+            }
+        }
+
+        /// <summary>
+        /// <see cref="Bits.Reverse(long)"/>
+        /// </summary>
+        [Test]
+        public void TestReverseInt64()
+        {
+            Check(default(long));
+            var allBitsSet = long.MinValue == default(long) ? long.MaxValue : unchecked((long)-1);
+            Check(allBitsSet);
+            Check(long.MinValue);
+            Check(long.MaxValue);
+
+            for (var i = 0; i < Bits.SizeOfInt64InBits; ++i)
+            {
+                Check(Bits.ShiftLeft((long)1, i));
+            }
+
+            // fuzz testing
+            for (var i = 0; i < FuzzTestIterations; ++i)
+            {
+                Check(this.GetRandomInt64());
+            }
+
+            void Check(long value)
+            {
+                var valueBits = Bits.ToLongBinaryString(value);
+                var expectedBits = ReverseString(valueBits);
+                var actual = Bits.Reverse(value);
+                var actualBits = Bits.ToLongBinaryString(actual);
+                Assert.AreEqual(expectedBits, actualBits, $"Reverse({value} /* {valueBits} */)");
+            }
+
+            string ReverseString(string bits)
+            {
+                var array = bits.ToCharArray();
+                Array.Reverse(array);
+                return new string(array);
             }
         }
 

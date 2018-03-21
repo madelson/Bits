@@ -66,7 +66,67 @@ namespace Bitwise
         /// </summary>
         [MemberFor(typeof(ushort))]
         public static ushort ShiftRight(ushort value, int positions) => unchecked((ushort)(value >> (positions & ((sizeof(ushort) * 8) - 1))));
-        
+
+        /// <summary>Simplifies codegen</summary>
+        internal static long And(long a, long b) => a & b;
+
+        /// <summary>Simplifies codegen</summary>
+        [MemberFor(typeof(ulong))]
+        internal static ulong And(ulong a, ulong b) => a & b;
+
+        /// <summary>As the native operator, but returns <see cref="short"/> instead of <see cref="int"/></summary>
+        [MemberFor(typeof(short))]
+        public static short And(short a, short b) => unchecked((short)(a & b));
+
+        /// <summary>As the native operator, but returns <see cref="ushort"/> instead of <see cref="int"/></summary>
+        [MemberFor(typeof(ushort))]
+        public static ushort And(ushort a, ushort b) => unchecked((ushort)(a & b));
+
+        /// <summary>Simplifies codegen</summary>
+        internal static long Or(long a, long b) => a | b;
+
+        /// <summary>Simplifies codegen</summary>
+        [MemberFor(typeof(ulong))]
+        internal static ulong Or(ulong a, ulong b) => a | b;
+
+        /// <summary>As the native operator, but returns <see cref="short"/> instead of <see cref="int"/></summary>
+        [MemberFor(typeof(short))]
+        public static short Or(short a, short b) => unchecked((short)(a | b));
+
+        /// <summary>As the native operator, but returns <see cref="ushort"/> instead of <see cref="int"/></summary>
+        [MemberFor(typeof(ushort))]
+        public static ushort Or(ushort a, ushort b) => unchecked((ushort)(a | b));
+
+        /// <summary>Simplifies codegen</summary>
+        internal static long Xor(long a, long b) => a ^ b;
+
+        /// <summary>Simplifies codegen</summary>
+        [MemberFor(typeof(ulong))]
+        internal static ulong Xor(ulong a, ulong b) => a ^ b;
+
+        /// <summary>As the native operator, but returns <see cref="short"/> instead of <see cref="int"/></summary>
+        [MemberFor(typeof(short))]
+        public static short Xor(short a, short b) => unchecked((short)(a ^ b));
+
+        /// <summary>As the native operator, but returns <see cref="ushort"/> instead of <see cref="int"/></summary>
+        [MemberFor(typeof(ushort))]
+        public static ushort Xor(ushort a, ushort b) => unchecked((ushort)(a ^ b));
+
+        /// <summary>Simplifies codegen</summary>
+        internal static long Not(long value) => ~value;
+
+        /// <summary>Simplifies codegen</summary>
+        [MemberFor(typeof(ulong))]
+        internal static ulong Not(ulong value) => ~value;
+
+        /// <summary>As the native operator, but returns <see cref="short"/> instead of <see cref="int"/></summary>
+        [MemberFor(typeof(short))]
+        public static short Not(short value) => unchecked((short)~value);
+
+        /// <summary>As the native operator, but returns <see cref="ushort"/> instead of <see cref="int"/></summary>
+        [MemberFor(typeof(ushort))]
+        public static ushort Not(ushort value) => unchecked((ushort)~value);
+
         /// <summary>
         /// Determines whether <paramref name="value"/> has any of the same bits set as <paramref name="flags"/>
         /// </summary>
@@ -355,6 +415,81 @@ namespace Bitwise
         /// to shifting right, except that bits shifted off the low end reenter on the high end
         /// </summary>
         public static long RotateRight(long value, int positions) => unchecked((long)RotateRight(ToUnsigned(value), positions));
+
+        /// <summary>
+        /// Returns <paramref name="value"/> with the bits reversed
+        /// </summary>
+        [MemberFor(typeof(ulong))]
+        public static ulong Reverse(ulong value)
+        {
+            // based on http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/8u40-b25/java/lang/Long.java#Long.reverse%28long%29
+
+            // the general approach here is to exchange pairs of bits, then sets of 4 bits, then 8, until all are exchanged. Rather than using the
+            // same methodology for all exchanges we can use a shortcut to do the last two exchanges in one pass
+            
+            unchecked
+            {
+                // initial exchanges:
+
+                // 0x5555 has all even bits set: exchanges every even bit with the following odd bit
+                value = Or(ShiftLeft(And(value, (ulong)0x5555555555555555), 1), And(ShiftRight(value, 1), (ulong)0x5555555555555555));
+
+                // to simplify codegen for smaller integral types, we fork on sizeof().
+                // The compiler will remove these branches so that no additional inefficiency
+                // is incurred
+#pragma warning disable 0162
+                if (sizeof(ulong) > 1)
+                {
+                    // 0x3333 follows the pattern 1100: exchanges every even pair of bits with the following odd pair of bits
+                    value = Or(ShiftLeft(And(value, (ulong)0x3333333333333333), 2), And(ShiftRight(value, 2), (ulong)0x3333333333333333));
+                }
+                if (sizeof(ulong) > 2)
+                {
+                    // 0xf0f0 follows the pattern 11110000: exchanges every even set of 4 bits with the following odd set of 4 bits
+                    value = Or(ShiftLeft(And(value, (ulong)0x0f0f0f0f0f0f0f0f), 4), And(ShiftRight(value, 4), (ulong)0x0f0f0f0f0f0f0f0f));
+                }
+                if (sizeof(ulong) > 4)
+                {
+                    // 0x00ff follows the pattern 0000000011111111: exchanges adjacent sets of 8 bits
+                    value = Or(ShiftLeft(And(value, (ulong)0x00ff00ff00ff00ff), 8), And(ShiftRight(value, 8), (ulong)0x00ff00ff00ff00ff));
+                }
+
+                // final exchanges:
+
+                // used to exchange the top and bottom fourths
+                const int LongShiftValue = 3 * (SizeOfUInt64InBits / 4);
+                // used to exchange the 2nd and 3rd fourths
+                const int ShortShiftValue = SizeOfUInt64InBits / 4;
+                // used to isolate the 2nd and 3rd fourths
+                const ulong SecondFourthMask = (ulong)(
+                    sizeof(ulong) == 1 ? 0b1100
+                        : sizeof(ulong) == 2 ? 0b11110000
+                        : sizeof(ulong) == 4 ? 0b1111111100000000
+                        : 0xffff0000
+                );
+#pragma warning restore 0162
+
+                return Or(
+                    // bottom fourth shifted to the top
+                    ShiftLeft(value, LongShiftValue),
+                    Or(
+                        // 2nd fourth shifted to the 3rd fourth
+                        ShiftLeft(And(value, SecondFourthMask), ShortShiftValue),
+                        Or(
+                            // 3rd fourth shifted to the 2nd fourth
+                            And(ShiftRight(value, ShortShiftValue), SecondFourthMask),
+                            // top fourth shifted to the bottom
+                            ShiftRight(value, LongShiftValue)
+                        )
+                    )
+                );
+            }
+        }
+
+        /// <summary>
+        /// Returns <paramref name="value"/> with the bits reversed
+        /// </summary>
+        public static long Reverse(long value) => unchecked((long)Reverse(ToUnsigned(value)));
 
         /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITHOUT leading zeros

@@ -269,6 +269,76 @@ namespace Bitwise
         public static ushort RotateRight(ushort value, int positions) => unchecked((ushort)(ShiftRight(value, positions) | ShiftLeft(value, -positions)));
 
         /// <summary>
+        /// Returns <paramref name="value"/> with the bits reversed
+        /// </summary>
+        [MemberFor(typeof(ushort))]
+        public static ushort Reverse(ushort value)
+        {
+            // based on http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/8u40-b25/java/lang/Long.java#Long.reverse%28short%29
+
+            // the general approach here is to exchange pairs of bits, then sets of 4 bits, then 8, until all are exchanged. Rather than using the
+            // same methodology for all exchanges we can use a shortcut to do the last two exchanges in one pass
+            
+            unchecked
+            {
+                // initial exchanges:
+
+                // 0x5555 has all even bits set: exchanges every even bit with the following odd bit
+                value = Or(ShiftLeft(And(value, (ushort)0x5555555555555555), 1), And(ShiftRight(value, 1), (ushort)0x5555555555555555));
+
+                // to simplify codegen for smaller integral types, we fork on sizeof().
+                // The compiler will remove these branches so that no additional inefficiency
+                // is incurred
+#pragma warning disable 0162
+                if (sizeof(ushort) > 1)
+                {
+                    // 0x3333 follows the pattern 1100: exchanges every even pair of bits with the following odd pair of bits
+                    value = Or(ShiftLeft(And(value, (ushort)0x3333333333333333), 2), And(ShiftRight(value, 2), (ushort)0x3333333333333333));
+                }
+                if (sizeof(ushort) > 2)
+                {
+                    // 0xf0f0 follows the pattern 11110000: exchanges every even set of 4 bits with the following odd set of 4 bits
+                    value = Or(ShiftLeft(And(value, (ushort)0x0f0f0f0f0f0f0f0f), 4), And(ShiftRight(value, 4), (ushort)0x0f0f0f0f0f0f0f0f));
+                }
+                if (sizeof(ushort) > 4)
+                {
+                    // 0x00ff follows the pattern 0000000011111111: exchanges adjacent sets of 8 bits
+                    value = Or(ShiftLeft(And(value, (ushort)0x00ff00ff00ff00ff), 8), And(ShiftRight(value, 8), (ushort)0x00ff00ff00ff00ff));
+                }
+
+                // final exchanges:
+
+                // used to exchange the top and bottom fourths
+                const int LongShiftValue = 3 * (SizeOfUInt16InBits / 4);
+                // used to exchange the 2nd and 3rd fourths
+                const int ShortShiftValue = SizeOfUInt16InBits / 4;
+                // used to isolate the 2nd and 3rd fourths
+                const ushort SecondFourthMask = (ushort)(
+                    sizeof(ushort) == 1 ? 0b1100
+                        : sizeof(ushort) == 2 ? 0b11110000
+                        : sizeof(ushort) == 4 ? 0b1111111100000000
+                        : 0xffff0000
+                );
+#pragma warning restore 0162
+
+                return Or(
+                    // bottom fourth shifted to the top
+                    ShiftLeft(value, LongShiftValue),
+                    Or(
+                        // 2nd fourth shifted to the 3rd fourth
+                        ShiftLeft(And(value, SecondFourthMask), ShortShiftValue),
+                        Or(
+                            // 3rd fourth shifted to the 2nd fourth
+                            And(ShiftRight(value, ShortShiftValue), SecondFourthMask),
+                            // top fourth shifted to the bottom
+                            ShiftRight(value, LongShiftValue)
+                        )
+                    )
+                );
+            }
+        }
+
+        /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITHOUT leading zeros
         /// </summary>
         [MemberFor(typeof(ushort))]
