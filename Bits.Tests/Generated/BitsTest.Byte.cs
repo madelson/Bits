@@ -230,23 +230,43 @@ namespace Medallion.Tests
         }
 
         /// <summary>
-        /// <see cref="Bits.ClearLeastSignificantBit(byte)"/>
+        /// <see cref="Bits.ClearLeastSignificantSetBit(byte)"/>
         /// </summary>
         [Test]
-        public void TestClearLeastSignificantBitByte()
+        public void TestClearLeastSignificantSetBitByte()
         {
-            Assert.AreEqual((byte)0b101000, Bits.ClearLeastSignificantBit((byte)0b101100));
-            Assert.AreEqual(default(byte), Bits.ClearLeastSignificantBit(default(byte)));
+            Assert.AreEqual((byte)0b101000, Bits.ClearLeastSignificantSetBit((byte)0b101100));
+            Assert.AreEqual(default(byte), Bits.ClearLeastSignificantSetBit(default(byte)));
 
             var allBitsSet = byte.MinValue == default(byte) ? byte.MaxValue : unchecked((byte)-1);
 
             for (var i = 0; i < Bits.SizeOfByteInBits; ++i)
             {
-                Assert.AreEqual(default(byte), Bits.ClearLeastSignificantBit((byte)((byte)1 << i)));
-                allBitsSet = Bits.ClearLeastSignificantBit(allBitsSet);
+                Assert.AreEqual(default(byte), Bits.ClearLeastSignificantSetBit((byte)((byte)1 << i)));
+                allBitsSet = Bits.ClearLeastSignificantSetBit(allBitsSet);
             }
 
             Assert.AreEqual(default(byte), allBitsSet);
+        }
+
+        /// <summary>
+        /// <see cref="Bits.SetLeastSignificantZeroBit(byte)(byte)"/>
+        /// </summary>
+        [Test]
+        public void TestSetLeastSignificantZeroBitByte()
+        {
+            Assert.AreEqual((byte)0b010111, Bits.SetLeastSignificantZeroBit((byte)0b010011));
+            var allBitsSet = byte.MinValue == default(byte) ? byte.MaxValue : unchecked((byte)-1);
+            Assert.AreEqual(allBitsSet, Bits.SetLeastSignificantZeroBit(allBitsSet));
+
+            var value = default(byte);
+            for (var i = 0; i < Bits.SizeOfByteInBits; ++i)
+            {
+                Assert.AreEqual(allBitsSet, Bits.SetLeastSignificantZeroBit(allBitsSet.ClearBit(i)));
+                value = Bits.SetLeastSignificantZeroBit(allBitsSet);
+            }
+
+            Assert.AreEqual(allBitsSet, value);
         }
 
         /// <summary>

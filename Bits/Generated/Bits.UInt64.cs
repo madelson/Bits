@@ -60,14 +60,18 @@ namespace Medallion
         }
 
         /// <summary>
-        /// Returns <paramref name="value"/> with the least significant bit cleared
+        /// Returns <paramref name="value"/> with the least significant set bit cleared
         /// </summary>
-        public static ulong ClearLeastSignificantBit(ulong value) => (ulong)(value & unchecked(value - 1));
+        public static ulong ClearLeastSignificantSetBit(ulong value) => (ulong)(value & unchecked(value - 1));
+        
+        /// <summary>
+        /// Return s<paramref name="value"/> with the least significant zero bit set
+        /// </summary>
+        public static ulong SetLeastSignificantZeroBit(ulong value) => unchecked((ulong)(value | (value + 1)));
 
         /// <summary>
         /// Returns <paramref name="value"/> with all bits less significant than the least significant set bit will be set.
-        /// If <paramref name="value"/> is zero then all bits are trailing zero bits so the returned value will have all bits
-        /// set
+        /// If <paramref name="value"/> is zero then all bits are trailing zero bits so the returned value will have all bits set
         /// </summary>
         public static ulong SetTrailingZeroBits(ulong value) => unchecked((ulong)(value | (value - 1)));
 

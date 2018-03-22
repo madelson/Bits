@@ -178,14 +178,18 @@ namespace Medallion
         }
 
         /// <summary>
-        /// Returns <paramref name="value"/> with the least significant bit cleared
+        /// Returns <paramref name="value"/> with the least significant set bit cleared
         /// </summary>
-        public static long ClearLeastSignificantBit(long value) => (long)(value & unchecked(value - 1));
+        public static long ClearLeastSignificantSetBit(long value) => (long)(value & unchecked(value - 1));
+        
+        /// <summary>
+        /// Return s<paramref name="value"/> with the least significant zero bit set
+        /// </summary>
+        public static long SetLeastSignificantZeroBit(long value) => unchecked((long)(value | (value + 1)));
 
         /// <summary>
         /// Returns <paramref name="value"/> with all bits less significant than the least significant set bit will be set.
-        /// If <paramref name="value"/> is zero then all bits are trailing zero bits so the returned value will have all bits
-        /// set
+        /// If <paramref name="value"/> is zero then all bits are trailing zero bits so the returned value will have all bits set
         /// </summary>
         public static long SetTrailingZeroBits(long value) => unchecked((long)(value | (value - 1)));
 
