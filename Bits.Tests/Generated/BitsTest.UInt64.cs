@@ -250,6 +250,45 @@ namespace Medallion.Tests
         }
 
         /// <summary>
+        /// <see cref="Bits.SetTrailingZeroBits(ulong)"/>
+        /// </summary>
+        [Test]
+        public void TestSetTrailingZeroBitsUInt64()
+        {
+            Check(default(ulong));
+            var allBitsSet = ulong.MinValue == default(ulong) ? ulong.MaxValue : unchecked((ulong)-1);
+            Check(allBitsSet);
+            Check(ulong.MinValue);
+            Check(ulong.MaxValue);
+
+            for (var i = 0; i < Bits.SizeOfUInt64InBits; ++i)
+            {
+                Check(Bits.ShiftLeft((ulong)1, i));
+            }
+
+            // fuzz testing
+            for (var i = 0; i < FuzzTestIterations; ++i)
+            {
+                Check(this.GetRandomUInt64());
+            }
+
+            void Check(ulong value)
+            {
+                var valueBits = Bits.ToLongBinaryString(value);
+                var expectedBits = SetTrailingZeroBitsString(valueBits);
+                var actual = Bits.SetTrailingZeroBits(value);
+                var actualBits = Bits.ToLongBinaryString(actual);
+                Assert.AreEqual(expectedBits, actualBits, $"TestSetTrailingZeroBitsUInt64({value} /* {valueBits} */)");
+            }
+
+            string SetTrailingZeroBitsString(string bits)
+            {
+                var lastOneBitIndex = bits.LastIndexOf('1');
+                return bits.Substring(0, lastOneBitIndex + 1) + new string('1', bits.Length - (lastOneBitIndex + 1));
+            }
+        }
+
+        /// <summary>
         /// <see cref="Bits.IsolateLeastSignificantSetBit(ulong)"/>
         /// </summary>
         [Test]

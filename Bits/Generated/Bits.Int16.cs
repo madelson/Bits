@@ -70,6 +70,13 @@ namespace Medallion
         public static short ClearLeastSignificantBit(short value) => (short)(value & unchecked(value - 1));
 
         /// <summary>
+        /// Returns <paramref name="value"/> with all bits less significant than the least significant set bit will be set.
+        /// If <paramref name="value"/> is zero then all bits are trailing zero bits so the returned value will have all bits
+        /// set
+        /// </summary>
+        public static short SetTrailingZeroBits(short value) => unchecked((short)(value | (value - 1)));
+
+        /// <summary>
         /// Returns <paramref name="value"/> with all bits cleared EXCEPT the least significant set bit
         /// </summary>
         public static short IsolateLeastSignificantSetBit(short value) => (short)(value & unchecked((short)0 - value));

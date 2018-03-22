@@ -247,6 +247,45 @@ namespace Medallion.Tests
         }
 
         /// <summary>
+        /// <see cref="Bits.SetTrailingZeroBits(long)"/>
+        /// </summary>
+        [Test]
+        public void TestSetTrailingZeroBitsInt64()
+        {
+            Check(default(long));
+            var allBitsSet = long.MinValue == default(long) ? long.MaxValue : unchecked((long)-1);
+            Check(allBitsSet);
+            Check(long.MinValue);
+            Check(long.MaxValue);
+
+            for (var i = 0; i < Bits.SizeOfInt64InBits; ++i)
+            {
+                Check(Bits.ShiftLeft((long)1, i));
+            }
+
+            // fuzz testing
+            for (var i = 0; i < FuzzTestIterations; ++i)
+            {
+                Check(this.GetRandomInt64());
+            }
+
+            void Check(long value)
+            {
+                var valueBits = Bits.ToLongBinaryString(value);
+                var expectedBits = SetTrailingZeroBitsString(valueBits);
+                var actual = Bits.SetTrailingZeroBits(value);
+                var actualBits = Bits.ToLongBinaryString(actual);
+                Assert.AreEqual(expectedBits, actualBits, $"TestSetTrailingZeroBitsInt64({value} /* {valueBits} */)");
+            }
+
+            string SetTrailingZeroBitsString(string bits)
+            {
+                var lastOneBitIndex = bits.LastIndexOf('1');
+                return bits.Substring(0, lastOneBitIndex + 1) + new string('1', bits.Length - (lastOneBitIndex + 1));
+            }
+        }
+
+        /// <summary>
         /// <see cref="Bits.IsolateLeastSignificantSetBit(long)"/>
         /// </summary>
         [Test]

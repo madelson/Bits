@@ -65,6 +65,13 @@ namespace Medallion
         public static ulong ClearLeastSignificantBit(ulong value) => (ulong)(value & unchecked(value - 1));
 
         /// <summary>
+        /// Returns <paramref name="value"/> with all bits less significant than the least significant set bit will be set.
+        /// If <paramref name="value"/> is zero then all bits are trailing zero bits so the returned value will have all bits
+        /// set
+        /// </summary>
+        public static ulong SetTrailingZeroBits(ulong value) => unchecked((ulong)(value | (value - 1)));
+
+        /// <summary>
         /// Returns <paramref name="value"/> with all bits cleared EXCEPT the least significant set bit
         /// </summary>
         public static ulong IsolateLeastSignificantSetBit(ulong value) => (ulong)(value & unchecked((ulong)0 - value));

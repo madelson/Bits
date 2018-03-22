@@ -101,6 +101,13 @@ namespace Medallion
         public static byte ClearLeastSignificantBit(byte value) => (byte)(value & unchecked(value - 1));
 
         /// <summary>
+        /// Returns <paramref name="value"/> with all bits less significant than the least significant set bit will be set.
+        /// If <paramref name="value"/> is zero then all bits are trailing zero bits so the returned value will have all bits
+        /// set
+        /// </summary>
+        public static byte SetTrailingZeroBits(byte value) => unchecked((byte)(value | (value - 1)));
+
+        /// <summary>
         /// Returns <paramref name="value"/> with all bits cleared EXCEPT the least significant set bit
         /// </summary>
         public static byte IsolateLeastSignificantSetBit(byte value) => (byte)(value & unchecked((byte)0 - value));
@@ -136,7 +143,7 @@ namespace Medallion
             }
 #pragma warning restore 0162
 
-            return (byte)(value - (byte)(value >> 1));
+            return unchecked((byte)(value - (byte)(value >> 1)));
         }
 
         /// <summary>

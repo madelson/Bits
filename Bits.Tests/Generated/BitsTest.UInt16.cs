@@ -250,6 +250,45 @@ namespace Medallion.Tests
         }
 
         /// <summary>
+        /// <see cref="Bits.SetTrailingZeroBits(ushort)"/>
+        /// </summary>
+        [Test]
+        public void TestSetTrailingZeroBitsUInt16()
+        {
+            Check(default(ushort));
+            var allBitsSet = ushort.MinValue == default(ushort) ? ushort.MaxValue : unchecked((ushort)-1);
+            Check(allBitsSet);
+            Check(ushort.MinValue);
+            Check(ushort.MaxValue);
+
+            for (var i = 0; i < Bits.SizeOfUInt16InBits; ++i)
+            {
+                Check(Bits.ShiftLeft((ushort)1, i));
+            }
+
+            // fuzz testing
+            for (var i = 0; i < FuzzTestIterations; ++i)
+            {
+                Check(this.GetRandomUInt16());
+            }
+
+            void Check(ushort value)
+            {
+                var valueBits = Bits.ToLongBinaryString(value);
+                var expectedBits = SetTrailingZeroBitsString(valueBits);
+                var actual = Bits.SetTrailingZeroBits(value);
+                var actualBits = Bits.ToLongBinaryString(actual);
+                Assert.AreEqual(expectedBits, actualBits, $"TestSetTrailingZeroBitsUInt16({value} /* {valueBits} */)");
+            }
+
+            string SetTrailingZeroBitsString(string bits)
+            {
+                var lastOneBitIndex = bits.LastIndexOf('1');
+                return bits.Substring(0, lastOneBitIndex + 1) + new string('1', bits.Length - (lastOneBitIndex + 1));
+            }
+        }
+
+        /// <summary>
         /// <see cref="Bits.IsolateLeastSignificantSetBit(ushort)"/>
         /// </summary>
         [Test]
