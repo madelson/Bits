@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net471</TargetFramework>
+    <RootNamespace>Medallion.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Bitwise\Bitwise.csproj" />
+    <ProjectReference Include="..\Bits\Bits.csproj" />
   </ItemGroup>
 
 </Project>

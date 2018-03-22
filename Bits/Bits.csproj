@@ -11,6 +11,7 @@
     <Description>Fast bitwise operations for .NET</Description>
     <Copyright>Copyright © 2018 Michael Adelson</Copyright>
     <PackageReleaseNotes>Pre-release</PackageReleaseNotes>
+    <RootNamespace>Medallion</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">

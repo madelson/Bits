@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bitwise.Tests
+namespace Medallion.Tests
 {
     public partial class BitsTest
     {

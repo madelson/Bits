@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bitwise", "Bitwise\Bitwise.csproj", "{0D63A3ED-F80A-4DAB-AEB4-C04781339842}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bits", "Bits\Bits.csproj", "{0D63A3ED-F80A-4DAB-AEB4-C04781339842}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bitwise.Tests", "Bitwise.Tests\Bitwise.Tests.csproj", "{C6BF521C-558A-4898-90CD-4E381B9F6261}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bits.Tests", "Bits.Tests\Bits.Tests.csproj", "{C6BF521C-558A-4898-90CD-4E381B9F6261}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

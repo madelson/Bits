@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Bitwise
+namespace Medallion
 {
     public static partial class Bits
     {

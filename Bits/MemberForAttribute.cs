@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
-namespace Bitwise
+namespace Medallion
 {
     /// <summary>
     /// Marker attribute to designate members which require special-casing other than <see cref="long"/>

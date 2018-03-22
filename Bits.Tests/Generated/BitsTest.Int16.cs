@@ -5,10 +5,9 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Bitwise;
 using System.Linq;
 
-namespace Bitwise.Tests
+namespace Medallion.Tests
 {
     public partial class BitsTest
     {

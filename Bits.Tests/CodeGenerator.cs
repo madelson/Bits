@@ -8,7 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Bitwise.Tests
+namespace Medallion.Tests
 {
     public class CodeGenerator
     {
@@ -17,7 +17,7 @@ namespace Bitwise.Tests
         {
             var testBinDirectory = Path.GetDirectoryName(this.GetType().Assembly.Location);
 
-            GenerateCodeForAlternateNumericTypes(Path.Combine(testBinDirectory, @"..\..\..\..\Bitwise\Bits.cs"));
+            GenerateCodeForAlternateNumericTypes(Path.Combine(testBinDirectory, @"..\..\..\..\Bits\Bits.cs"));
             GenerateCodeForAlternateNumericTypes(Path.Combine(testBinDirectory, @"..\..\..\BitsTest.cs"));
         }
 
