@@ -458,6 +458,49 @@ namespace Bitwise.Tests
         }
 
         /// <summary>
+        /// <see cref="Bits.ReverseBytes(byte)"/>
+        /// </summary>
+        [Test]
+        public void TestReverseBytesByte()
+        {
+            Check(default(byte));
+            var allBitsSet = byte.MinValue == default(byte) ? byte.MaxValue : unchecked((byte)-1);
+            Check(allBitsSet);
+            Check(byte.MinValue);
+            Check(byte.MaxValue);
+
+            for (var i = 0; i < Bits.SizeOfByteInBits; ++i)
+            {
+                Check(Bits.ShiftLeft((byte)1, i));
+            }
+
+            // fuzz testing
+            for (var i = 0; i < FuzzTestIterations; ++i)
+            {
+                Check(this.GetRandomByte());
+            }
+
+            void Check(byte value)
+            {
+                var valueBits = Bits.ToLongBinaryString(value);
+                var expectedBits = ReverseStringBytes(valueBits);
+                var actual = Bits.ReverseBytes(value);
+                var actualBits = Bits.ToLongBinaryString(actual);
+                Assert.AreEqual(expectedBits, actualBits, $"Reverse({value} /* {valueBits} */)");
+            }
+
+            string ReverseStringBytes(string bits)
+            {
+                return string.Join(
+                    string.Empty,
+                    Enumerable.Range(0, bits.Length / 8)
+                        .Select(i => bits.Substring(i * 8, 8))
+                        .Reverse()
+                );
+            }
+        }
+
+        /// <summary>
         /// <see cref="Bits.ToShortBinaryString(byte)"/>
         /// </summary>
         [Test]

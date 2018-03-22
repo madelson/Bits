@@ -15,34 +15,26 @@ namespace Bitwise
         internal const int SizeOfInt32InBits = sizeof(int) * 8;
 
         /// <summary>
-        /// The native shift operator on <see cref="int"/> converts to <see cref="int"/> before shifting. This method performs
-        /// a shift purely within the confines of the <see cref="int"/> data type
+        /// The presence of this method simplifies codegen when using <see cref="ShiftLeft(short, int)"/> and similar
         /// </summary>
-        [MemberFor(typeof(int))]
-        public static int ShiftLeft(int value, int positions) => unchecked((int)(value << (positions & ((sizeof(int) * 8) - 1))));
+        internal static int ShiftLeft(int value, int positions) => value << positions;
 
         /// <summary>
-        /// The native shift operator on <see cref="int"/> converts to <see cref="int"/> before shifting. This method performs
-        /// a shift purely within the confines of the <see cref="int"/> data type
+        /// The presence of this method simplifies codegen when using <see cref="ShiftRight(short, int)"/> and similar
         /// </summary>
-        [MemberFor(typeof(int))]
-        public static int ShiftRight(int value, int positions) => unchecked((int)(value >> (positions & ((sizeof(int) * 8) - 1))));
+        internal static int ShiftRight(int value, int positions) => value >> positions;
 
-        /// <summary>As the native operator, but returns <see cref="int"/> instead of <see cref="int"/></summary>
-        [MemberFor(typeof(int))]
-        public static int And(int a, int b) => unchecked((int)(a & b));
+        /// <summary>Simplifies codegen</summary>
+        internal static int And(int a, int b) => a & b;
 
-        /// <summary>As the native operator, but returns <see cref="int"/> instead of <see cref="int"/></summary>
-        [MemberFor(typeof(int))]
-        public static int Or(int a, int b) => unchecked((int)(a | b));
+        /// <summary>Simplifies codegen</summary>
+        internal static int Or(int a, int b) => a | b;
 
-        /// <summary>As the native operator, but returns <see cref="int"/> instead of <see cref="int"/></summary>
-        [MemberFor(typeof(int))]
-        public static int Xor(int a, int b) => unchecked((int)(a ^ b));
+        /// <summary>Simplifies codegen</summary>
+        internal static int Xor(int a, int b) => a ^ b;
 
-        /// <summary>As the native operator, but returns <see cref="int"/> instead of <see cref="int"/></summary>
-        [MemberFor(typeof(int))]
-        public static int Not(int value) => unchecked((int)~value);
+        /// <summary>Simplifies codegen</summary>
+        internal static int Not(int value) => ~value;
 
         /// <summary>
         /// Determines whether <paramref name="value"/> has any of the same bits set as <paramref name="flags"/>
@@ -146,10 +138,14 @@ namespace Bitwise
         public static int Reverse(int value) => unchecked((int)Reverse(ToUnsigned(value)));
 
         /// <summary>
+        /// Returns <paramref name="value"/> with the bytes reversed
+        /// </summary>
+        public static int ReverseBytes(int value) => unchecked((int)ReverseBytes(ToUnsigned(value)));
+
+        /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITHOUT leading zeros
         /// </summary>
-        [MemberFor(typeof(int))] // Convert.ToString(#, base) is defined for byte rather than for int
-        public static string ToShortBinaryString(int value) => Convert.ToString(ToUnsigned(value), toBase: 2);
+        public static string ToShortBinaryString(int value) => Convert.ToString(value, toBase: 2);
 
         /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITH ALL leading zeros

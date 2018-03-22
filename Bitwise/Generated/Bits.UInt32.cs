@@ -16,34 +16,32 @@ namespace Bitwise
         internal const int SizeOfUInt32InBits = sizeof(uint) * 8;
 
         /// <summary>
-        /// The native shift operator on <see cref="uint"/> converts to <see cref="int"/> before shifting. This method performs
-        /// a shift purely within the confines of the <see cref="uint"/> data type
+        /// The presence of this method simplifies codegen when using <see cref="ShiftLeft(short, int)"/> and similar
         /// </summary>
         [MemberFor(typeof(uint))]
-        public static uint ShiftLeft(uint value, int positions) => unchecked((uint)(value << (positions & ((sizeof(uint) * 8) - 1))));
+        internal static uint ShiftLeft(uint value, int positions) => value << positions;
 
         /// <summary>
-        /// The native shift operator on <see cref="uint"/> converts to <see cref="int"/> before shifting. This method performs
-        /// a shift purely within the confines of the <see cref="uint"/> data type
+        /// The presence of this method simplifies codegen when using <see cref="ShiftRight(short, int)"/> and similar
         /// </summary>
         [MemberFor(typeof(uint))]
-        public static uint ShiftRight(uint value, int positions) => unchecked((uint)(value >> (positions & ((sizeof(uint) * 8) - 1))));
+        internal static uint ShiftRight(uint value, int positions) => value >> positions;
 
-        /// <summary>As the native operator, but returns <see cref="uint"/> instead of <see cref="int"/></summary>
+        /// <summary>Simplifies codegen</summary>
         [MemberFor(typeof(uint))]
-        public static uint And(uint a, uint b) => unchecked((uint)(a & b));
+        internal static uint And(uint a, uint b) => a & b;
 
-        /// <summary>As the native operator, but returns <see cref="uint"/> instead of <see cref="int"/></summary>
+        /// <summary>Simplifies codegen</summary>
         [MemberFor(typeof(uint))]
-        public static uint Or(uint a, uint b) => unchecked((uint)(a | b));
+        internal static uint Or(uint a, uint b) => a | b;
 
-        /// <summary>As the native operator, but returns <see cref="uint"/> instead of <see cref="int"/></summary>
+        /// <summary>Simplifies codegen</summary>
         [MemberFor(typeof(uint))]
-        public static uint Xor(uint a, uint b) => unchecked((uint)(a ^ b));
+        internal static uint Xor(uint a, uint b) => a ^ b;
 
-        /// <summary>As the native operator, but returns <see cref="uint"/> instead of <see cref="int"/></summary>
+        /// <summary>Simplifies codegen</summary>
         [MemberFor(typeof(uint))]
-        public static uint Not(uint value) => unchecked((uint)~value);
+        internal static uint Not(uint value) => ~value;
 
         /// <summary>
         /// Determines whether <paramref name="value"/> has any of the same bits set as <paramref name="flags"/>
@@ -366,6 +364,53 @@ namespace Bitwise
                     )
                 );
             }
+        }
+
+        /// <summary>
+        /// Returns <paramref name="value"/> with the bytes reversed
+        /// </summary>
+        [MemberFor(typeof(uint))]
+        public static uint ReverseBytes(uint value)
+        {
+            var result = Or(ShiftLeft(value, SizeOfInt64InBits - 8), ShiftRight(value, SizeOfInt64InBits - 8));
+            
+            unchecked
+            {
+                // to simplify codegen for smaller integral types, we fork on sizeof().
+                // The compiler will remove these branches so that no additional inefficiency
+                // is incurred
+#pragma warning disable 0162
+                if (sizeof(uint) > 2)
+                {
+                    result = Or(
+                        result,
+                        Or(
+                            And(ShiftLeft(value, SizeOfInt64InBits - 24), (uint)((uint)0xff << (SizeOfInt64InBits - 16))),
+                            And(ShiftRight(value, SizeOfInt64InBits - 24), (uint)0xff00)
+                        )
+                    );
+                }
+                if (sizeof(uint) > 4)
+                {
+                    result = Or(
+                        result,
+                        Or(
+                            And(ShiftLeft(value, SizeOfInt64InBits - 40), (uint)((uint)0xff << (SizeOfInt64InBits - 24))),
+                            And(ShiftRight(value, SizeOfInt64InBits - 40), (uint)0xff0000)
+                        )
+                    );
+                    result = Or(
+                        result,
+                        Or(
+                            And(ShiftLeft(value, SizeOfInt64InBits - 56), (uint)((uint)0xff << (SizeOfInt64InBits - 32))),
+                            And(ShiftRight(value, SizeOfInt64InBits - 56), (uint)0xff000000)
+                        )
+                    );
+                }
+#pragma warning restore 0162
+            }
+
+            return result;
         }
 
         /// <summary>

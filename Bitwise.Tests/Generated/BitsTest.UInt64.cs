@@ -458,6 +458,49 @@ namespace Bitwise.Tests
         }
 
         /// <summary>
+        /// <see cref="Bits.ReverseBytes(ulong)"/>
+        /// </summary>
+        [Test]
+        public void TestReverseBytesUInt64()
+        {
+            Check(default(ulong));
+            var allBitsSet = ulong.MinValue == default(ulong) ? ulong.MaxValue : unchecked((ulong)-1);
+            Check(allBitsSet);
+            Check(ulong.MinValue);
+            Check(ulong.MaxValue);
+
+            for (var i = 0; i < Bits.SizeOfUInt64InBits; ++i)
+            {
+                Check(Bits.ShiftLeft((ulong)1, i));
+            }
+
+            // fuzz testing
+            for (var i = 0; i < FuzzTestIterations; ++i)
+            {
+                Check(this.GetRandomUInt64());
+            }
+
+            void Check(ulong value)
+            {
+                var valueBits = Bits.ToLongBinaryString(value);
+                var expectedBits = ReverseStringBytes(valueBits);
+                var actual = Bits.ReverseBytes(value);
+                var actualBits = Bits.ToLongBinaryString(actual);
+                Assert.AreEqual(expectedBits, actualBits, $"Reverse({value} /* {valueBits} */)");
+            }
+
+            string ReverseStringBytes(string bits)
+            {
+                return string.Join(
+                    string.Empty,
+                    Enumerable.Range(0, bits.Length / 8)
+                        .Select(i => bits.Substring(i * 8, 8))
+                        .Reverse()
+                );
+            }
+        }
+
+        /// <summary>
         /// <see cref="Bits.ToShortBinaryString(ulong)"/>
         /// </summary>
         [Test]

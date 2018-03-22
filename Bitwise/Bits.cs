@@ -492,6 +492,66 @@ namespace Bitwise
         public static long Reverse(long value) => unchecked((long)Reverse(ToUnsigned(value)));
 
         /// <summary>
+        /// Returns <paramref name="value"/> with the bytes reversed
+        /// </summary>
+        [MemberFor(typeof(ulong))]
+        public static ulong ReverseBytes(ulong value)
+        {
+            var result = Or(ShiftLeft(value, SizeOfInt64InBits - 8), ShiftRight(value, SizeOfInt64InBits - 8));
+            
+            unchecked
+            {
+                // to simplify codegen for smaller integral types, we fork on sizeof().
+                // The compiler will remove these branches so that no additional inefficiency
+                // is incurred
+#pragma warning disable 0162
+                if (sizeof(ulong) > 2)
+                {
+                    result = Or(
+                        result,
+                        Or(
+                            And(ShiftLeft(value, SizeOfInt64InBits - 24), (ulong)((ulong)0xff << (SizeOfInt64InBits - 16))),
+                            And(ShiftRight(value, SizeOfInt64InBits - 24), (ulong)0xff00)
+                        )
+                    );
+                }
+                if (sizeof(ulong) > 4)
+                {
+                    result = Or(
+                        result,
+                        Or(
+                            And(ShiftLeft(value, SizeOfInt64InBits - 40), (ulong)((ulong)0xff << (SizeOfInt64InBits - 24))),
+                            And(ShiftRight(value, SizeOfInt64InBits - 40), (ulong)0xff0000)
+                        )
+                    );
+                    result = Or(
+                        result,
+                        Or(
+                            And(ShiftLeft(value, SizeOfInt64InBits - 56), (ulong)((ulong)0xff << (SizeOfInt64InBits - 32))),
+                            And(ShiftRight(value, SizeOfInt64InBits - 56), (ulong)0xff000000)
+                        )
+                    );
+                }
+#pragma warning restore 0162
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Returns <paramref name="value"/> with the bytes reversed
+        /// </summary>
+        public static long ReverseBytes(long value) => unchecked((long)ReverseBytes(ToUnsigned(value)));
+
+        /// <summary>no-op</summary>
+        [MemberFor(typeof(byte))]
+        internal static byte ReverseBytes(byte value) => value;
+
+        /// <summary>no-op</summary>
+        [MemberFor(typeof(sbyte))]
+        internal static sbyte ReverseBytes(sbyte value) => value;
+
+        /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITHOUT leading zeros
         /// </summary>
         public static string ToShortBinaryString(long value) => Convert.ToString(value, toBase: 2);

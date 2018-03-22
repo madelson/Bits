@@ -50,9 +50,14 @@ namespace Bitwise.Tests
                     {
                         if (!memberGroup.Any(m => m.MemberFor == type))
                         {
-                            var referenceMember = memberGroup.OrderByDescending(m => IsUnsigned(type) == IsUnsigned(m.MemberFor))
-                                .ThenBy(m => Marshal.SizeOf(m.MemberFor) >= Marshal.SizeOf(type) ? Marshal.SizeOf(m.MemberFor) - Marshal.SizeOf(type) : -Marshal.SizeOf(m.MemberFor))
+                            // must reference a type larger than yourself (since typically we specify int64 and special case smaller types
+                            var referenceMember = memberGroup.Where(m => Marshal.SizeOf(m.MemberFor) >= Marshal.SizeOf(type))
+                                // prefer to reference a member with the same signed-ness
+                                .OrderByDescending(m => IsUnsigned(type) == IsUnsigned(m.MemberFor))
+                                // break ties by referencing the member closest in size
+                                .ThenBy(m => Marshal.SizeOf(m.MemberFor) - Marshal.SizeOf(type))
                                 .First();
+                            Console.WriteLine($"For member {memberGroup.Key} and type {type} choosing reference member {referenceMember.MemberFor}");
                             var typeMember = Regex.Replace(
                                 referenceMember.Body,
                                 $@"(?<alias>{ToAlias(referenceMember.MemberFor)})|(?<name>{referenceMember.MemberFor.Name})"
@@ -108,11 +113,15 @@ namespace Bitwise.Tests
                 ? typeof(long)
                 : FromAlias(memberForMatches[0].Groups["type"].Value);
 
+            var extractedName = nameMatches[0].Groups["name"].Value;
+
             return new MemberParseResult
             {
                 Body = memberContent,
-                Name = nameMatches[0].Groups["name"].Value
-                    .Replace(memberFor.Name, string.Empty),
+                // ReverseBytes does not get the base name "Reverses for the byte type
+                Name = extractedName != nameof(Bits.ReverseBytes)
+                    ? extractedName.Replace(memberFor.Name, string.Empty)
+                    : extractedName,
                 MemberFor = memberFor
             };
         }

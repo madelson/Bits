@@ -339,6 +339,53 @@ namespace Bitwise
         }
 
         /// <summary>
+        /// Returns <paramref name="value"/> with the bytes reversed
+        /// </summary>
+        [MemberFor(typeof(ushort))]
+        public static ushort ReverseBytes(ushort value)
+        {
+            var result = Or(ShiftLeft(value, SizeOfInt64InBits - 8), ShiftRight(value, SizeOfInt64InBits - 8));
+            
+            unchecked
+            {
+                // to simplify codegen for smaller integral types, we fork on sizeof().
+                // The compiler will remove these branches so that no additional inefficiency
+                // is incurred
+#pragma warning disable 0162
+                if (sizeof(ushort) > 2)
+                {
+                    result = Or(
+                        result,
+                        Or(
+                            And(ShiftLeft(value, SizeOfInt64InBits - 24), (ushort)((ushort)0xff << (SizeOfInt64InBits - 16))),
+                            And(ShiftRight(value, SizeOfInt64InBits - 24), (ushort)0xff00)
+                        )
+                    );
+                }
+                if (sizeof(ushort) > 4)
+                {
+                    result = Or(
+                        result,
+                        Or(
+                            And(ShiftLeft(value, SizeOfInt64InBits - 40), (ushort)((ushort)0xff << (SizeOfInt64InBits - 24))),
+                            And(ShiftRight(value, SizeOfInt64InBits - 40), (ushort)0xff0000)
+                        )
+                    );
+                    result = Or(
+                        result,
+                        Or(
+                            And(ShiftLeft(value, SizeOfInt64InBits - 56), (ushort)((ushort)0xff << (SizeOfInt64InBits - 32))),
+                            And(ShiftRight(value, SizeOfInt64InBits - 56), (ushort)0xff000000)
+                        )
+                    );
+                }
+#pragma warning restore 0162
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITHOUT leading zeros
         /// </summary>
         [MemberFor(typeof(ushort))]

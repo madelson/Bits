@@ -116,10 +116,14 @@ namespace Bitwise
         public static short Reverse(short value) => unchecked((short)Reverse(ToUnsigned(value)));
 
         /// <summary>
+        /// Returns <paramref name="value"/> with the bytes reversed
+        /// </summary>
+        public static short ReverseBytes(short value) => unchecked((short)ReverseBytes(ToUnsigned(value)));
+
+        /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITHOUT leading zeros
         /// </summary>
-        [MemberFor(typeof(short))] // Convert.ToString(#, base) is defined for byte rather than for short
-        public static string ToShortBinaryString(short value) => Convert.ToString(ToUnsigned(value), toBase: 2);
+        public static string ToShortBinaryString(short value) => Convert.ToString(value, toBase: 2);
 
         /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITH ALL leading zeros
