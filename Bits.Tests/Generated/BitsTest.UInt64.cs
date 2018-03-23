@@ -420,6 +420,28 @@ namespace Medallion.Tests
         }
 
         /// <summary>
+        /// <see cref="Bits.HasSingleOneBit(ulong)"/>
+        /// </summary>
+        [Test]
+        public void TestHasSingleOneBitUInt64()
+        {
+            Assert.IsTrue(Bits.HasSingleOneBit((ulong)1));
+            Assert.IsFalse(Bits.HasSingleOneBit((ulong)0));
+            var allBitsSet = ulong.MinValue == default(ulong) ? ulong.MaxValue : unchecked((ulong)-1);
+            Assert.IsFalse(Bits.HasSingleOneBit(allBitsSet));
+
+            for (var i = 0; i < Bits.SizeOfUInt64InBits; ++i)
+            {
+                Assert.IsTrue(Bits.HasSingleOneBit(Bits.ShiftLeft((ulong)1, i)));
+                Assert.IsFalse(Bits.HasSingleOneBit(Bits.Not(Bits.ShiftLeft((ulong)1, i))));
+                if (i < Bits.SizeOfUInt64InBits - 1)
+                {
+                    Assert.IsFalse(Bits.HasSingleOneBit(Bits.ShiftLeft((ulong)0b11, i)));
+                }
+            }
+        }
+
+        /// <summary>
         /// <see cref="Bits.RotateLeft(ulong, int)"/>
         /// </summary>
         [Test]

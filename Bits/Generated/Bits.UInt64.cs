@@ -81,6 +81,11 @@ namespace Medallion
         public static ulong IsolateLeastSignificantOneBit(ulong value) => (ulong)(value & unchecked((ulong)0 - value));
 
         /// <summary>
+        /// Returns true if <paramref name="value"/> has only a single bit set and false otherwise
+        /// </summary>
+        public static bool HasSingleOneBit(ulong value) => (value & unchecked((ulong)(value - 1))) == 0 && value != 0;
+
+        /// <summary>
         /// Returns the binary representation of <paramref name="value"/> WITH ALL leading zeros
         /// </summary>
         public static string ToLongBinaryString(ulong value) => ToShortBinaryString(value).PadLeft(SizeOfUInt64InBits, '0');

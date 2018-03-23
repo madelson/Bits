@@ -266,6 +266,11 @@ namespace Medallion
         }
 
         /// <summary>
+        /// Returns true if <paramref name="value"/> has only a single bit set and false otherwise
+        /// </summary>
+        public static bool HasSingleOneBit(ushort value) => (value & unchecked((ushort)(value - 1))) == 0 && value != 0;
+
+        /// <summary>
         /// Returns <paramref name="value"/> "rotated" left by <paramref name="positions"/> bit positions. This is similar
         /// to shifting left, except that bits shifted off the high end reenter on the low end
         /// </summary>

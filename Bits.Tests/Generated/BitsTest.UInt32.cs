@@ -420,6 +420,28 @@ namespace Medallion.Tests
         }
 
         /// <summary>
+        /// <see cref="Bits.HasSingleOneBit(uint)"/>
+        /// </summary>
+        [Test]
+        public void TestHasSingleOneBitUInt32()
+        {
+            Assert.IsTrue(Bits.HasSingleOneBit((uint)1));
+            Assert.IsFalse(Bits.HasSingleOneBit((uint)0));
+            var allBitsSet = uint.MinValue == default(uint) ? uint.MaxValue : unchecked((uint)-1);
+            Assert.IsFalse(Bits.HasSingleOneBit(allBitsSet));
+
+            for (var i = 0; i < Bits.SizeOfUInt32InBits; ++i)
+            {
+                Assert.IsTrue(Bits.HasSingleOneBit(Bits.ShiftLeft((uint)1, i)));
+                Assert.IsFalse(Bits.HasSingleOneBit(Bits.Not(Bits.ShiftLeft((uint)1, i))));
+                if (i < Bits.SizeOfUInt32InBits - 1)
+                {
+                    Assert.IsFalse(Bits.HasSingleOneBit(Bits.ShiftLeft((uint)0b11, i)));
+                }
+            }
+        }
+
+        /// <summary>
         /// <see cref="Bits.RotateLeft(uint, int)"/>
         /// </summary>
         [Test]
