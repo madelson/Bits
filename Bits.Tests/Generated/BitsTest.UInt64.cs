@@ -230,20 +230,20 @@ namespace Medallion.Tests
         }
 
         /// <summary>
-        /// <see cref="Bits.ClearLeastSignificantSetBit(ulong)"/>
+        /// <see cref="Bits.ClearLeastSignificantOneBit(ulong)"/>
         /// </summary>
         [Test]
-        public void TestClearLeastSignificantSetBitUInt64()
+        public void TestClearLeastSignificantOneBitUInt64()
         {
-            Assert.AreEqual((ulong)0b101000, Bits.ClearLeastSignificantSetBit((ulong)0b101100));
-            Assert.AreEqual(default(ulong), Bits.ClearLeastSignificantSetBit(default(ulong)));
+            Assert.AreEqual((ulong)0b101000, Bits.ClearLeastSignificantOneBit((ulong)0b101100));
+            Assert.AreEqual(default(ulong), Bits.ClearLeastSignificantOneBit(default(ulong)));
 
             var allBitsSet = ulong.MinValue == default(ulong) ? ulong.MaxValue : unchecked((ulong)-1);
 
             for (var i = 0; i < Bits.SizeOfUInt64InBits; ++i)
             {
-                Assert.AreEqual(default(ulong), Bits.ClearLeastSignificantSetBit((ulong)((ulong)1 << i)));
-                allBitsSet = Bits.ClearLeastSignificantSetBit(allBitsSet);
+                Assert.AreEqual(default(ulong), Bits.ClearLeastSignificantOneBit((ulong)((ulong)1 << i)));
+                allBitsSet = Bits.ClearLeastSignificantOneBit(allBitsSet);
             }
 
             Assert.AreEqual(default(ulong), allBitsSet);
@@ -309,39 +309,39 @@ namespace Medallion.Tests
         }
 
         /// <summary>
-        /// <see cref="Bits.IsolateLeastSignificantSetBit(ulong)"/>
+        /// <see cref="Bits.IsolateLeastSignificantOneBit(ulong)"/>
         /// </summary>
         [Test]
-        public void TestIsolateLeastSignificantSetBitUInt64()
+        public void TestIsolateLeastSignificantOneBitUInt64()
         {
-            Assert.AreEqual((ulong)0b000100, Bits.IsolateLeastSignificantSetBit((ulong)0b101100));
-            Assert.AreEqual(default(ulong), Bits.IsolateLeastSignificantSetBit(default(ulong)));
+            Assert.AreEqual((ulong)0b000100, Bits.IsolateLeastSignificantOneBit((ulong)0b101100));
+            Assert.AreEqual(default(ulong), Bits.IsolateLeastSignificantOneBit(default(ulong)));
 
             for (var i = 0; i < Bits.SizeOfUInt64InBits; ++i)
             {
-                Assert.AreEqual(default(ulong).SetBit(i), Bits.IsolateLeastSignificantSetBit((default(ulong).SetBit(i))));
+                Assert.AreEqual(default(ulong).SetBit(i), Bits.IsolateLeastSignificantOneBit((default(ulong).SetBit(i))));
                 if (i > 0)
                 {
-                    Assert.AreEqual(default(ulong).SetBit(i - 1), Bits.IsolateLeastSignificantSetBit(default(ulong).SetBit(i - 1).SetBit(i)));
+                    Assert.AreEqual(default(ulong).SetBit(i - 1), Bits.IsolateLeastSignificantOneBit(default(ulong).SetBit(i - 1).SetBit(i)));
                 }
             }
         }
 
         /// <summary>
-        /// <see cref="Bits.IsolateMostSignificantSetBit(ulong)"/>
+        /// <see cref="Bits.IsolateMostSignificantOneBit(ulong)"/>
         /// </summary>
         [Test]
-        public void TestIsolateMostSignificantSetBitUInt64()
+        public void TestIsolateMostSignificantOneBitUInt64()
         {
-            Assert.AreEqual((ulong)0b100000, Bits.IsolateMostSignificantSetBit((ulong)0b101100));
-            Assert.AreEqual(default(ulong), Bits.IsolateMostSignificantSetBit(default(ulong)));
+            Assert.AreEqual((ulong)0b100000, Bits.IsolateMostSignificantOneBit((ulong)0b101100));
+            Assert.AreEqual(default(ulong), Bits.IsolateMostSignificantOneBit(default(ulong)));
 
             for (var i = 0; i < Bits.SizeOfUInt64InBits; ++i)
             {
-                Assert.AreEqual(default(ulong).SetBit(i), Bits.IsolateMostSignificantSetBit((default(ulong).SetBit(i))));
+                Assert.AreEqual(default(ulong).SetBit(i), Bits.IsolateMostSignificantOneBit((default(ulong).SetBit(i))));
                 if (i > 0)
                 {
-                    Assert.AreEqual(default(ulong).SetBit(i), Bits.IsolateMostSignificantSetBit(default(ulong).SetBit(i - 1).SetBit(i)));
+                    Assert.AreEqual(default(ulong).SetBit(i), Bits.IsolateMostSignificantOneBit(default(ulong).SetBit(i - 1).SetBit(i)));
                 }
             }
         }

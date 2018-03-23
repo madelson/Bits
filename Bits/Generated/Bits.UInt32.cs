@@ -96,29 +96,29 @@ namespace Medallion
         /// <summary>
         /// Returns <paramref name="value"/> with the least significant set bit cleared
         /// </summary>
-        public static uint ClearLeastSignificantSetBit(uint value) => (uint)(value & unchecked(value - 1));
+        public static uint ClearLeastSignificantOneBit(uint value) => (uint)(value & unchecked(value - 1));
         
         /// <summary>
         /// Return s<paramref name="value"/> with the least significant zero bit set
         /// </summary>
-        public static uint SetLeastSignificantZeroBit(uint value) => unchecked((uint)(value | (value + 1)));
+        public static uint SetLeastSignificantZeroBit(uint value) => unchecked((uint)(value | (uint)(value + 1)));
 
         /// <summary>
         /// Returns <paramref name="value"/> with all bits less significant than the least significant set bit will be set.
         /// If <paramref name="value"/> is zero then all bits are trailing zero bits so the returned value will have all bits set
         /// </summary>
-        public static uint SetTrailingZeroBits(uint value) => unchecked((uint)(value | (value - 1)));
+        public static uint SetTrailingZeroBits(uint value) => unchecked((uint)(value | (uint)(value - 1)));
 
         /// <summary>
         /// Returns <paramref name="value"/> with all bits cleared EXCEPT the least significant set bit
         /// </summary>
-        public static uint IsolateLeastSignificantSetBit(uint value) => (uint)(value & unchecked((uint)0 - value));
+        public static uint IsolateLeastSignificantOneBit(uint value) => (uint)(value & unchecked((uint)0 - value));
 
         /// <summary>
         /// Returns <paramref name="value"/> with all bits cleared EXCEPT the most significant set bit
         /// </summary>
         [MemberFor(typeof(uint))]
-        public static uint IsolateMostSignificantSetBit(uint value)
+        public static uint IsolateMostSignificantOneBit(uint value)
         {
             // the idea here is to steadily set all bits less significant than the most significant bit,
             // and then follow up by clearing them all. See https://stackoverflow.com/questions/28846601/java-integer-highestonebit-in-c-sharp

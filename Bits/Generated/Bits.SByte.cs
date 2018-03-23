@@ -97,28 +97,28 @@ namespace Medallion
         /// <summary>
         /// Returns <paramref name="value"/> with the least significant set bit cleared
         /// </summary>
-        public static sbyte ClearLeastSignificantSetBit(sbyte value) => (sbyte)(value & unchecked(value - 1));
+        public static sbyte ClearLeastSignificantOneBit(sbyte value) => (sbyte)(value & unchecked(value - 1));
         
         /// <summary>
         /// Return s<paramref name="value"/> with the least significant zero bit set
         /// </summary>
-        public static sbyte SetLeastSignificantZeroBit(sbyte value) => unchecked((sbyte)(value | (value + 1)));
+        public static sbyte SetLeastSignificantZeroBit(sbyte value) => unchecked((sbyte)(value | (sbyte)(value + 1)));
 
         /// <summary>
         /// Returns <paramref name="value"/> with all bits less significant than the least significant set bit will be set.
         /// If <paramref name="value"/> is zero then all bits are trailing zero bits so the returned value will have all bits set
         /// </summary>
-        public static sbyte SetTrailingZeroBits(sbyte value) => unchecked((sbyte)(value | (value - 1)));
+        public static sbyte SetTrailingZeroBits(sbyte value) => unchecked((sbyte)(value | (sbyte)(value - 1)));
 
         /// <summary>
         /// Returns <paramref name="value"/> with all bits cleared EXCEPT the least significant set bit
         /// </summary>
-        public static sbyte IsolateLeastSignificantSetBit(sbyte value) => (sbyte)(value & unchecked((sbyte)0 - value));
+        public static sbyte IsolateLeastSignificantOneBit(sbyte value) => (sbyte)(value & unchecked((sbyte)0 - value));
 
         /// <summary>
         /// Returns <paramref name="value"/> with all bits cleared EXCEPT the most significant set bit
         /// </summary>
-        public static sbyte IsolateMostSignificantSetBit(sbyte value) => unchecked((sbyte)IsolateMostSignificantSetBit(ToUnsigned(value)));
+        public static sbyte IsolateMostSignificantOneBit(sbyte value) => unchecked((sbyte)IsolateMostSignificantOneBit(ToUnsigned(value)));
 
         /// <summary>
         /// Returns the number of set bits in <paramref name="value"/>

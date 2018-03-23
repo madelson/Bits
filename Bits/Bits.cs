@@ -180,29 +180,29 @@ namespace Medallion
         /// <summary>
         /// Returns <paramref name="value"/> with the least significant set bit cleared
         /// </summary>
-        public static long ClearLeastSignificantSetBit(long value) => (long)(value & unchecked(value - 1));
+        public static long ClearLeastSignificantOneBit(long value) => (long)(value & unchecked(value - 1));
         
         /// <summary>
         /// Return s<paramref name="value"/> with the least significant zero bit set
         /// </summary>
-        public static long SetLeastSignificantZeroBit(long value) => unchecked((long)(value | (value + 1)));
+        public static long SetLeastSignificantZeroBit(long value) => unchecked((long)(value | (long)(value + 1)));
 
         /// <summary>
         /// Returns <paramref name="value"/> with all bits less significant than the least significant set bit will be set.
         /// If <paramref name="value"/> is zero then all bits are trailing zero bits so the returned value will have all bits set
         /// </summary>
-        public static long SetTrailingZeroBits(long value) => unchecked((long)(value | (value - 1)));
+        public static long SetTrailingZeroBits(long value) => unchecked((long)(value | (long)(value - 1)));
 
         /// <summary>
         /// Returns <paramref name="value"/> with all bits cleared EXCEPT the least significant set bit
         /// </summary>
-        public static long IsolateLeastSignificantSetBit(long value) => (long)(value & unchecked((long)0 - value));
+        public static long IsolateLeastSignificantOneBit(long value) => (long)(value & unchecked((long)0 - value));
 
         /// <summary>
         /// Returns <paramref name="value"/> with all bits cleared EXCEPT the most significant set bit
         /// </summary>
         [MemberFor(typeof(ulong))]
-        public static ulong IsolateMostSignificantSetBit(ulong value)
+        public static ulong IsolateMostSignificantOneBit(ulong value)
         {
             // the idea here is to steadily set all bits less significant than the most significant bit,
             // and then follow up by clearing them all. See https://stackoverflow.com/questions/28846601/java-integer-highestonebit-in-c-sharp
@@ -235,7 +235,7 @@ namespace Medallion
         /// <summary>
         /// Returns <paramref name="value"/> with all bits cleared EXCEPT the most significant set bit
         /// </summary>
-        public static long IsolateMostSignificantSetBit(long value) => unchecked((long)IsolateMostSignificantSetBit(ToUnsigned(value)));
+        public static long IsolateMostSignificantOneBit(long value) => unchecked((long)IsolateMostSignificantOneBit(ToUnsigned(value)));
 
         /// <summary>
         /// Returns the number of set bits in <paramref name="value"/>

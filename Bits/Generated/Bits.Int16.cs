@@ -67,28 +67,28 @@ namespace Medallion
         /// <summary>
         /// Returns <paramref name="value"/> with the least significant set bit cleared
         /// </summary>
-        public static short ClearLeastSignificantSetBit(short value) => (short)(value & unchecked(value - 1));
+        public static short ClearLeastSignificantOneBit(short value) => (short)(value & unchecked(value - 1));
         
         /// <summary>
         /// Return s<paramref name="value"/> with the least significant zero bit set
         /// </summary>
-        public static short SetLeastSignificantZeroBit(short value) => unchecked((short)(value | (value + 1)));
+        public static short SetLeastSignificantZeroBit(short value) => unchecked((short)(value | (short)(value + 1)));
 
         /// <summary>
         /// Returns <paramref name="value"/> with all bits less significant than the least significant set bit will be set.
         /// If <paramref name="value"/> is zero then all bits are trailing zero bits so the returned value will have all bits set
         /// </summary>
-        public static short SetTrailingZeroBits(short value) => unchecked((short)(value | (value - 1)));
+        public static short SetTrailingZeroBits(short value) => unchecked((short)(value | (short)(value - 1)));
 
         /// <summary>
         /// Returns <paramref name="value"/> with all bits cleared EXCEPT the least significant set bit
         /// </summary>
-        public static short IsolateLeastSignificantSetBit(short value) => (short)(value & unchecked((short)0 - value));
+        public static short IsolateLeastSignificantOneBit(short value) => (short)(value & unchecked((short)0 - value));
 
         /// <summary>
         /// Returns <paramref name="value"/> with all bits cleared EXCEPT the most significant set bit
         /// </summary>
-        public static short IsolateMostSignificantSetBit(short value) => unchecked((short)IsolateMostSignificantSetBit(ToUnsigned(value)));
+        public static short IsolateMostSignificantOneBit(short value) => unchecked((short)IsolateMostSignificantOneBit(ToUnsigned(value)));
 
         /// <summary>
         /// Returns the number of set bits in <paramref name="value"/>
