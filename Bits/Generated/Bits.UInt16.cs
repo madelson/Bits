@@ -7,6 +7,9 @@ using System.Text;
 
 namespace Medallion
 {
+    /// <summary>
+    /// Provides implementations of various bitwise operations on primitive numeric types
+    /// </summary>
     public static partial class Bits
     {
         /// <summary>
