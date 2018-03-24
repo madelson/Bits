@@ -37,8 +37,8 @@ Method | Notes
 -------|------
 RotateLeft | similar to `<<`, but the bits shifted off the high end reenter on the low end
 RotateRight | similar to `>>`, but the bits shifted off the low end reenter on the high end
-Reverse | Reverses the bits of a value
-ReverseBytes | Reverses the bytes of a value
+Reverse | reverses the bits of a value
+ReverseBytes | reverses the bytes of a value
 IsolateLeastSignificantOneBit | clears all but the lowest one bit in a value
 IsolateMostSignificantOneBit | clears all but the highest one bit in a value
 ClearLeastSignificantOneBit | clears the lowest one bit in a value
