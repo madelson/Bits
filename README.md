@@ -25,11 +25,11 @@ ToLongBinaryString | binary representation of a value *with* leading zeros
 ### Counting
 
 Method | Notes
-|-------|------|
-|BitCount | counts the number of one bits in a value|
-|TrailingZeroBitCount | counts the number of trailing zero bits in a value|
-|LeadingZeroBitCount | counts the number of leading zero bits in a value|
-|HasSingleOneBit | determines whether a value consists of a single set bit|
+-------|------
+BitCount | counts the number of one bits in a value
+TrailingZeroBitCount | counts the number of trailing zero bits in a value
+LeadingZeroBitCount | counts the number of leading zero bits in a value
+HasSingleOneBit | determines whether a value consists of a single set bit
 
 ### Manipulation
 
