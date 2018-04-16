@@ -52,4 +52,5 @@ While primitive bitwise operations like `|` and `&` are defined natively for all
 To simplify working with the smaller integral values, the following methods are provided for `sbyte`, `byte`, `ushort`, and `short`: `ShiftLeft`, `ShiftRight`, `And`, `Or`, `Xor`, and `Not`.
 
 ## Release notes
+- 1.1.0 Added explicit net45 target without the NETStandard.Library dependency
 - 1.0.0 Initial release
