@@ -17,7 +17,7 @@ I've endeavored to provide efficient, loop-free implementations of each operator
 Method | Notes
 -------|------
 HasAnyFlag | whether a value has *any* of the same bits set as another value
-HasAllFlag | whether a value has *all* of the same bits set as another value
+HasAllFlags | whether a value has *all* of the same bits set as another value
 Get/Set/Clear/FlipBit | manipulates an individual bit in a value by index
 ToShortBinaryString | binary representation of a value *without* leading zeros
 ToLongBinaryString | binary representation of a value *with* leading zeros
